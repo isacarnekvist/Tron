@@ -17,8 +17,8 @@ public class GameController {
 
 	public GameController(int maxX, int maxY) {
 		grid = new Grid(maxX, maxY);
-		player1 = new Bike(1);
-		player2 = new Bike(2);
+		player1 = new Bike(1, 450, 450);
+		player2 = new Bike(2, 960, 500);
 		state = START;
 	}
 	
