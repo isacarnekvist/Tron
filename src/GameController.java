@@ -23,7 +23,7 @@ public class GameController {
 		grid = new Grid(maxX, maxY);
 		player1 = new Bike(1, maxX/2 - 508, maxY/2 + 280);
 		player2 = new Bike(2, maxX/2 + 514, maxY/2 + 280);
-		logo = new Sprite("res/logo.png", 234, 996);
+		logo = new Sprite("res/logo.png", 234, 1024);
 		state = START;
 	}
 	
@@ -123,6 +123,13 @@ public class GameController {
 						if(!Keyboard.isKeyDown(Keyboard.KEY_D)) {
 							player1.turn(STRAIGHT);
 						}
+					}
+					break;
+				case Keyboard.KEY_ESCAPE:
+					if(Keyboard.getEventKeyState()) {
+						player1 = new Bike(1, width/2 - 508, height/2 + 280);
+						player2 = new Bike(2, width/2 + 514, height/2 + 280);
+						state = START;
 					}
 					break;
 				}
