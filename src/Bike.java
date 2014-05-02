@@ -23,18 +23,18 @@ public class Bike {
 	 * This represents a player and a bike as one.
 	 * @param player Should be 1 or 2
 	 */
-	public Bike(int player) {
+	public Bike(int player, int posX, int posY) {
 		
 		switch (player) {
 		case 1:
 			sprite = new Sprite("res/bike_orange.png", 43, 105);
 			tail = new Tail("res/tail_orange.png");
-			pos = new SimpleMatrix(1, 2, true, 400, 50);
+			pos = new SimpleMatrix(1, 2, true, posX, posY);
 			break;
 		case 2:
 			sprite = new Sprite("res/bike_blue.png", 43, 105);
 			tail = new Tail("res/tail_blue.png");
-			pos = new SimpleMatrix(1, 2, true, 950, 50);
+			pos = new SimpleMatrix(1, 2, true, posX, posY);
 			break;
 		default:
 			System.err.println("Bike constructor: player should be 1 or 2.");
@@ -42,9 +42,10 @@ public class Bike {
 			break;
 		}
 		
-		vel = new SimpleMatrix(1, 2, true, normalSpeed, 0);
-		angle = 0.0;
+		vel = new SimpleMatrix(1, 2, true, 0, -normalSpeed);
+		angle = -Math.PI/2;
 		sprite.setRotationPoint(22, 22);
+		sprite.rotate(angle);
 		turning = 0;
 	}
 	

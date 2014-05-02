@@ -26,45 +26,40 @@ public class GameController {
 	/**
 	 * Render the start screen
 	 */
-	public void renderStartScreen() {
-		if (state != START)
-			return;
-		Sprite startScreen = new Sprite("res/start.png", 1024, 1024);
+	private void renderStartScreen(int delta) {
+		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos()); 
+		Sprite startScreen = new Sprite("res/startscreen.png", 1024, 1024);
 		startScreen.draw(512, 512);
-
-		while(Keyboard.next()) {
-			switch (Keyboard.getEventKey()) {
-				case Keyboard.KEY_ENTER:
-					if (Keyboard.getEventKeyState()) {
-						// todo: make startscreen fade away and start the game
-						state = GAME;
-						return;
-					}
-				break;
-			default:
-				break;
-			}
-		}
+		player1.render(0);
+		player2.render(0);
+	}
+	
+	private void renderGameScreen(int delta) {
+		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos()); 
+		player1.render(delta);
+		player1.turn(RIGHT);
+		player2.render(delta);
+		player2.turn(RIGHT);
 	}
 
 	/**
 	 * @param delta Time since last render in ms.
 	 */
 	public void render(int delta) {
-		// Check for events
-		if (state == GAME)
-			checkForEvents();
-		if (state == START)
-			renderStartScreen();
-		
-		// Change stuff depending on input
+		checkForEvents();
+		switch (state) {
+		case START:
+			renderStartScreen(delta);
+			break;
+		case GAME:
+			renderGameScreen(delta);
+			break;
+		default:
+			break;
+		}
 		
 		// Render
-		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos());
-		if (state == START) 
-		player1.render(delta);
-		player1.turn(RIGHT);
-		player2.render(delta);
+		
 	}
 	
 
@@ -110,6 +105,9 @@ public class GameController {
 						player1.turn(STRAIGHT);
 					}
 				}
+				break;
+			case Keyboard.KEY_RETURN:
+				state = GAME;
 				break;
 			default:
 				break;
