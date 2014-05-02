@@ -73,6 +73,9 @@ public class Bike {
 		return pos;
 	}
 	
+	/**
+	 * @return the position of the foremost edge of bike's front wheel. 
+	 */
 	public SimpleMatrix getFrontCenterPos() {
 		return pos.plus( sprite.getFrontLeft().plus(sprite.getFrontRight()).scale(0.5) );
 	}
