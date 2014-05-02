@@ -85,45 +85,20 @@ public class GameController {
 				}
 			}
 			break;
-			
 		case GAME:
 			while(Keyboard.next()) {
 				switch (Keyboard.getEventKey()) {
-				case Keyboard.KEY_RIGHT:
-					if(Keyboard.getEventKeyState()) {
-						player2.turn(RIGHT);
-					} else {
-						if(!Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-							player2.turn(STRAIGHT);
-						}
-					}
-					break;
 				case Keyboard.KEY_LEFT:
-					if(Keyboard.getEventKeyState()) {
-						player2.turn(LEFT);
-					} else {
-						if(!Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-							player2.turn(STRAIGHT);
-						}
-					}
+					keys(Keyboard.KEY_LEFT, Keyboard.KEY_RIGHT, player2, LEFT);
 					break;
-				case Keyboard.KEY_D:
-					if(Keyboard.getEventKeyState()) {
-						player1.turn(RIGHT);
-					} else {
-						if(!Keyboard.isKeyDown(Keyboard.KEY_A)) {
-							player1.turn(STRAIGHT);
-						}
-					}
+				case Keyboard.KEY_RIGHT:
+					keys(Keyboard.KEY_RIGHT, Keyboard.KEY_LEFT, player2, RIGHT);
 					break;
 				case Keyboard.KEY_A:
-					if(Keyboard.getEventKeyState()) {
-						player1.turn(LEFT);
-					} else {
-						if(!Keyboard.isKeyDown(Keyboard.KEY_D)) {
-							player1.turn(STRAIGHT);
-						}
-					}
+					keys(Keyboard.KEY_A, Keyboard.KEY_D, player1, LEFT);
+					break;
+				case Keyboard.KEY_D:
+					keys(Keyboard.KEY_D, Keyboard.KEY_A, player1, RIGHT);
 					break;
 				case Keyboard.KEY_ESCAPE:
 					if(Keyboard.getEventKeyState()) {
@@ -139,8 +114,25 @@ public class GameController {
 	}
 
 	/**
-	* @return the current state
-	*/
+	 * Checks for keyboard events and turns if a key is pressed
+	 * @param key The key to check for
+	 * @param oppositeKey The key that turns in the opposite direction
+	 * @param player The player object that should turn
+	 * @param direction The direction to turn in
+	 */
+	private void keys(int key, int oppositeKey, Bike player, int direction) {
+		if (Keyboard.getEventKeyState()) {
+			player.turn(direction);
+		} else {
+			if(!Keyboard.isKeyDown(oppositeKey)) {
+				player.turn(STRAIGHT);
+			}
+		}
+	}
+
+	/**
+	 * @return the current state
+	 */
 	public int getState() {
 		return state;
 	}
