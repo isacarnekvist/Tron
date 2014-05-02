@@ -12,7 +12,7 @@ public class Bike {
 	// Turning variables and constants
 	private int turning;
 	private final int STRAIGHT = 0;
-	private final double turningSpeed = Math.PI;	// radians per second
+	private final double turningSpeed = 1.3*Math.PI;	// radians per second
 	
 	// Other constants
 	private final int X = 0;
