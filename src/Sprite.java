@@ -64,9 +64,8 @@ public class Sprite {
 	 * @param x
 	 * @param y
 	 */
-	
 	public void setRotationPoint(int x, int y) {
-		// Change all vector that are pointing from rotation point to corners
+		// Change all vectors that are pointing from rotation point to corners
 		SimpleMatrix diff = new SimpleMatrix(1, 2, true, rotX - x, rotY - y);
 		ul = ul.plus(diff);
 		ur = ur.plus(diff);
