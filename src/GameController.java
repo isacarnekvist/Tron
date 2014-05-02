@@ -33,6 +33,11 @@ public class GameController {
 		player2.render(delta);
 	}
 	
+
+	/**
+	 * Checks for keyboard events and acts on them. Specifically, it tells
+	 * players to turn when the corresponding keys are pressed
+	 */
 	public void checkForEvents() {
 		while(Keyboard.next()) {
 			switch (Keyboard.getEventKey()) {

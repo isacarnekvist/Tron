@@ -31,8 +31,8 @@ public class Grid {
 		for(int row = 0; row < rows; row++) {
 			squares.add(new ArrayList<GridSquare>());
 			for(int col = 0; col < cols; col++) {
-					squares.get(row).add(new GridSquare((int)upperLeftCenter.get(X) + col*SQUARE_WIDTH,
-														(int)upperLeftCenter.get(Y) + row*SQUARE_WIDTH));
+				squares.get(row).add(new GridSquare((int)upperLeftCenter.get(X) + col*SQUARE_WIDTH,
+													(int)upperLeftCenter.get(Y) + row*SQUARE_WIDTH));
 			}
 		}
 		
@@ -43,7 +43,7 @@ public class Grid {
 	
 	/**
 	 * Render the grid.
-	 * @param bikePos Array of bikes positions
+	 * @param bikePos Array of bikes' positions
 	 */
 	public void render(SimpleMatrix bike1Pos, SimpleMatrix bike2pos) {
 		notifySquareOfBike(bike1Pos);
