@@ -23,7 +23,7 @@ public class GameController {
 		grid = new Grid(maxX, maxY);
 		player1 = new Bike(1, maxX/2 - 508, maxY/2 + 280);
 		player2 = new Bike(2, maxX/2 + 514, maxY/2 + 280);
-		logo = new Sprite("res/logo.png", 235, 1023);
+		logo = new Sprite("res/logo.png", 234, 996);
 		state = START;
 	}
 	
