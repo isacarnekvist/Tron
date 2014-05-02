@@ -43,7 +43,7 @@ public class Grid {
 	
 	/**
 	 * Render the grid.
-	 * @param bikePos Array of bikes positions
+	 * @param bikePos Array of bikes' positions
 	 */
 	public void render(SimpleMatrix bike1Pos, SimpleMatrix bike2pos) {
 		notifySquareOfBike(bike1Pos);
