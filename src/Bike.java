@@ -3,8 +3,10 @@ import org.ejml.simple.SimpleMatrix;
 public class Bike {
 	
 	private Sprite sprite;						// Texture and drawing
+	private Tail tail;							// Tail
 	private SimpleMatrix pos;					// Current xy-coordinate (at rotation point)
 	private SimpleMatrix vel;					// Current velocity vector
+	private double angle;						// How many radians is 'vel' rotated from x-axis (clockwise)
 	private SimpleMatrix rot;					// 4x4 rotation matrix
 	
 	// Turning variables and constants
@@ -26,10 +28,12 @@ public class Bike {
 		switch (player) {
 		case 1:
 			sprite = new Sprite("res/bike_orange.png", 43, 105);
+			tail = new Tail("res/tail_orange.png");
 			pos = new SimpleMatrix(1, 2, true, 400, 50);
 			break;
 		case 2:
 			sprite = new Sprite("res/bike_blue.png", 43, 105);
+			tail = new Tail("res/tail_blue.png");
 			pos = new SimpleMatrix(1, 2, true, 950, 50);
 			break;
 		default:
@@ -39,6 +43,7 @@ public class Bike {
 		}
 		
 		vel = new SimpleMatrix(1, 2, true, normalSpeed, 0);
+		angle = 0.0;
 		sprite.setRotationPoint(22, 22);
 		turning = 0;
 	}
@@ -52,6 +57,10 @@ public class Bike {
 	}
 		
 	public void render(int delta) {
+		double deltaAngle = turning*turningSpeed*delta/1000;
+		angle += deltaAngle;
+		tail.push(pos, angle);
+		tail.render();
 		if(turning != STRAIGHT) {
 			sprite.rotate(turning*turningSpeed*delta/1000);
 			rotateVelocity(turning*turningSpeed*delta/1000);
