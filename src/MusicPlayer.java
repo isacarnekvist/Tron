@@ -19,9 +19,11 @@ public class MusicPlayer {
 		switch (state) {
 		case START:
 			start.playAsMusic(1f, 1f, true);
+			start.setPosition(52f);
 			break;
 		case GAME:
-			game.playAsMusic(1, 1, true);
+			game.playAsMusic(1f, 1f, true);
+			game.setPosition(0.5f);
 			break;
 		}
 	}
