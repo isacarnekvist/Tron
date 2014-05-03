@@ -1,5 +1,7 @@
 import org.lwjgl.LWJGLException;
+import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class Loop {
@@ -23,6 +25,7 @@ public class Loop {
 			Display.update();		
 		}
 		Display.destroy();
+		AL.destroy();
 		System.exit(0);
 	}
 	

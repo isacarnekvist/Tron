@@ -14,5 +14,7 @@
 			<attribute name="javadoc_location" value="file:/Volumes/user/Isac/workspaces/java/lib/EJML/ejml-0.24-doc/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Volumes/user/Isac/workspaces/java/Tron/lib/jogg-0.0.7.jar"/>
+	<classpathentry kind="lib" path="/Volumes/user/Isac/workspaces/java/Tron/lib/jorbis-0.0.15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

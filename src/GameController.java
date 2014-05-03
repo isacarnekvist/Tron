@@ -3,8 +3,9 @@ import org.lwjgl.input.Keyboard;
 public class GameController {
 	
 	private Grid grid;
-	Bike player1;
+	private Bike player1;
 	private Bike player2;
+	private MusicPlayer mPlayer;
 	private Sprite logo;
 	private int width, height;				// Screen pixels height and width
 	
@@ -21,6 +22,8 @@ public class GameController {
 		width = maxX;
 		height = maxY;
 		grid = new Grid(maxX, maxY);
+		mPlayer = new MusicPlayer();
+		mPlayer.playTrack(START);
 		player1 = new Bike(1, maxX/2 - 508, maxY/2 + 280);
 		player2 = new Bike(2, maxX/2 + 514, maxY/2 + 280);
 		logo = new Sprite("res/logo.png", 234, 1024);
@@ -79,6 +82,7 @@ public class GameController {
 				switch (Keyboard.getEventKey()) {
 				case Keyboard.KEY_RETURN:
 					state = GAME;
+					mPlayer.playTrack(GAME);
 					break;
 				default:
 					break;
@@ -130,6 +134,7 @@ public class GameController {
 						player1 = new Bike(1, width/2 - 508, height/2 + 280);
 						player2 = new Bike(2, width/2 + 514, height/2 + 280);
 						state = START;
+						mPlayer.playTrack(START);
 					}
 					break;
 				}
