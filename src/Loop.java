@@ -1,4 +1,5 @@
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
 
@@ -42,6 +43,7 @@ public class Loop {
 			System.exit(0);
 		}
 		
+		Mouse.setGrabbed(true);
 		aspectRatio = (double)Display.getHeight()/Display.getWidth();
 		
 		// OpenGL setup
