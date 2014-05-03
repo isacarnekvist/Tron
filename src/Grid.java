@@ -35,10 +35,6 @@ public class Grid {
 													(int)upperLeftCenter.get(Y) + row*SQUARE_WIDTH));
 			}
 		}
-		
-		upperLeftCenter.print();
-		upperLeftCorner.print();
-		
 	}
 	
 	/**
