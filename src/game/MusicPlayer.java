@@ -1,3 +1,4 @@
+package game;
 import java.io.IOException;
 import org.newdawn.slick.openal.AudioLoader;
 import org.newdawn.slick.openal.Audio;

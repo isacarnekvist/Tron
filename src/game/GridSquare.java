@@ -1,3 +1,4 @@
+package game;
 import org.newdawn.slick.Color;
 
 /**
@@ -25,9 +26,9 @@ public class GridSquare {
 		double t = visitedTime - System.nanoTime()/1E9;
 		double flash = 0.35*Math.pow(Math.E, t);
 		Color c = new Color(
-			(float) (flash + 0.3 + 0.3*Math.sin(System.nanoTime()/3E9)),
-			(float) (flash + 0.3 + 0.3*Math.sin(4*Math.PI/6 + System.nanoTime()/3E9)),
-			(float) (flash + 0.3 + 0.3*Math.sin(8*Math.PI/6 + System.nanoTime()/3E9)),
+			(float) (flash + 0.3 + 0.3*Math.sin((double)System.nanoTime()/3E9)),
+			(float) (flash + 0.3 + 0.3*Math.sin(4*Math.PI/6 + (double)System.nanoTime()/3E9)),
+			(float) (flash + 0.3 + 0.3*Math.sin(8*Math.PI/6 + (double)System.nanoTime()/3E9)),
 			1f
 		);
 		c.bind();

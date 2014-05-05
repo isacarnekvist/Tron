@@ -1,3 +1,4 @@
+package game;
 import java.util.LinkedList;
 import org.ejml.simple.SimpleMatrix;
 

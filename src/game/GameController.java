@@ -1,3 +1,4 @@
+package game;
 import org.lwjgl.input.Keyboard;
 
 public class GameController {
