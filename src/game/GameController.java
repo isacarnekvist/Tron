@@ -1,5 +1,7 @@
 package game;
 import org.lwjgl.input.Keyboard;
+import org.ejml.simple.*;
+import java.util.ArrayList;
 
 public class GameController {
 	
@@ -14,6 +16,7 @@ public class GameController {
 	private Sprite key_left;
 	private Sprite key_right;
 	private int width, height;				// Screen pixels height and width
+	private ArrayList<SimpleMatrix> screenBounds;
 	
 	private final int LEFT 		= -1;
 	private final int STRAIGHT 	= 0;
@@ -38,6 +41,11 @@ public class GameController {
 		key_d = new Sprite("res/key_d.png", 64, 40);
 		key_left = new Sprite("res/key_left.png", 64, 40);
 		key_right = new Sprite("res/key_right.png", 64, 40);
+		screenBounds = new ArrayList<SimpleMatrix>();
+		screenBounds.add(new SimpleMatrix(1, 2, true, 0, 0));
+		screenBounds.add(new SimpleMatrix(1, 2, true, 0, height));
+		screenBounds.add(new SimpleMatrix(1, 2, true, width, height));
+		screenBounds.add(new SimpleMatrix(1, 2, true, width, 0));
 		state = START;
 	}
 	
@@ -58,7 +66,7 @@ public class GameController {
 		// Player 2
 		key_left.draw((int)player2.getRotatingPoint().get(0) - 67, (int)player2.getRotatingPoint().get(1) - 60);
 		player2.render(0);
-		key_right.draw((int)player2.getRotatingPoint().get(0) + 63, (int)player2.getRotatingPoint().get(1) - 60);
+		key_right.draw((int)player2.getRotatingPoint().get(0) + 64, (int)player2.getRotatingPoint().get(1) - 60);
 	}
 	
 	private void renderGameScreen(int delta) {
@@ -68,9 +76,11 @@ public class GameController {
 		player2.render(delta);
 		//player2.turn(RIGHT);
 		
-		// Check for collisions with all objects
+		// Check for collisions with all objects, Factor out?
 		boolean P2DidHitP1 = player1.isCollision(player2.getCenter(), 60, player2.getBoundingCoordinates());
 		boolean P1DidHitP2 = player2.isCollision(player1.getCenter(), 60, player1.getBoundingCoordinates());
+		boolean P1DidHitWall = player1.isCollision(null, width*2, screenBounds);
+		boolean P2DidHitWall = player2.isCollision(null, width*2, screenBounds);
 		// Decide what to do
 		if (P1DidHitP2 && !P2DidHitP1) {
 			// P1 hit P2:s tail
@@ -82,6 +92,12 @@ public class GameController {
 			System.out.println("P1 won.");
 		} else if (P1DidHitP2 && P2DidHitP1) {
 			System.out.println("You're both dead.");
+			reset();
+		} else if (P1DidHitWall) {
+			System.out.println("Player 1 is dead.");
+			reset();
+		} else if (P2DidHitWall) {
+			System.out.println("Player 2 is dead.");
 			reset();
 		}
 	}

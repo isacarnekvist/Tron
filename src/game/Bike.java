@@ -122,14 +122,20 @@ public class Bike {
 	}
 	
 	/**
-	 * @param otherPos Center coordinates of object to check against.
+	 * @param otherPos Center coordinates of object to check against. OK to send null.
 	 * @param radius Approximate radius of circle around object to check against.
 	 * @param other List of coordinates around the object to check against.
 	 * @return
 	 */
 	public boolean isCollision(SimpleMatrix otherPos, double radius, ArrayList<SimpleMatrix> other) {
 		
-		boolean bodyProximity = getCenter().minus(otherPos).normF() < 60 + radius;
+		boolean bodyProximity;
+		
+		if (otherPos == null) {
+			bodyProximity = true;
+		} else {
+			bodyProximity = getCenter().minus(otherPos).normF() < 60 + radius;
+		}
 		if(bodyProximity) {
 			ArrayList<SimpleMatrix> me = getBoundingCoordinates();
 			for (int i = 0; i < me.size(); i++) {
@@ -142,6 +148,10 @@ public class Bike {
 			}
 		}
 		
-		return tail.isCollision(otherPos, radius, other);
+		if(otherPos != null) {
+			return tail.isCollision(otherPos, radius, other);
+		} else {
+			return false;
+		}
 	}
 }
