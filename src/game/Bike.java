@@ -107,7 +107,8 @@ public class Bike {
 		return pos.plus( sprite.getFrontLeft().plus(sprite.getFrontRight()).scale(0.5) );
 	}
 
-	public boolean collision(SimpleMatrix otherPos) {
+	public boolean collision(Bike otherPlayer) {
+		otherPos = otherPlayer.getRotatingPont();
 		int x = sprite.getWidth();
 		int y = sprite.getHeight();
 		boolean xc = false;
