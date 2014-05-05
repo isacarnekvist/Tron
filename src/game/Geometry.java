@@ -31,11 +31,20 @@ public class Geometry {
 		
 		SimpleMatrix XM = A.solve(B);
 		
-		if (XM.get(X) < Math.max(l1p1.get(X), l1p2.get(X))) {
-			if(XM.get(X) > Math.min(l1p1.get(X), l1p2.get(X))) {
-				if(XM.get(Y) < Math.max(l1p1.get(Y), l1p2.get(Y))) {
-					if(XM.get(Y) > Math.min(l1p1.get(Y), l1p2.get(Y))) {
-						return true;
+		if(XM.get(X) >= Math.min(l1p1.get(X), l1p2.get(X))) { // GO
+			if(XM.get(X) <= Math.max(l1p1.get(X), l1p2.get(X))) { // CRAZY
+				if(XM.get(X) >= Math.min(l2p1.get(X), l2p2.get(X))) { // LIKE 
+					if(XM.get(X) <= Math.max(l2p1.get(X), l2p2.get(X))) { // YOU
+						// Now y-values
+						if(XM.get(Y) <= Math.max(l1p1.get(Y), l1p2.get(Y))) { // JUST
+							if(XM.get(Y) >= Math.min(l1p1.get(Y), l1p2.get(Y))) { // DON'T
+								if(XM.get(Y) <= Math.max(l2p1.get(Y), l2p2.get(Y))) { // CARE
+									if(XM.get(Y) >= Math.min(l2p1.get(Y), l2p2.get(Y))) { // !!!
+										return true;
+									}
+								}
+							}
+						}
 					}
 				}
 			}

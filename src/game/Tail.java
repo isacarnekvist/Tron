@@ -54,8 +54,21 @@ public class Tail {
 		
 		for (int i = 0; i < tail.size(); i += 20) {
 			checker = new SimpleMatrix(1, 2, true, tail.get(i).get(0), tail.get(i).get(1));
-			if (checker.minus(otherPos).normF() < radius) {
-				return true;
+			if (checker.minus(otherPos).normF() < radius) { // Approximate checking
+				// Now more careful testing
+				for(int j = 0; j < shape.size(); j++) {
+					if(i + 5 < tail.size()) {
+						if(Geometry.linesIntersect(shape.get(j), shape.get((j + 1) % shape.size()),
+												tail.get(i), tail.get(i + 5))) {
+							return true;
+						}
+					} else {
+						if(Geometry.linesIntersect(shape.get(j), shape.get((j + 1) % shape.size()),
+								tail.get(i), tail.get(i - 5))) {
+							return true;
+						}
+					}
+				}
 			}
 		}
 		

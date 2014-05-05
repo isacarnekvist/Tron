@@ -113,10 +113,10 @@ public class Bike {
 	
 	public ArrayList<SimpleMatrix> getBoundingCoordinates() {
 		ArrayList<SimpleMatrix> edges = new ArrayList<SimpleMatrix>();
-		edges.add(getCenter().plus(sprite.getBackLeft()));
-		edges.add(getCenter().plus(sprite.getBackRight()));
-		edges.add(getCenter().plus(sprite.getFrontRight()));
-		edges.add(getCenter().plus(sprite.getFrontLeft()));
+		edges.add(getRotatingPoint().plus(sprite.getBackLeft()));
+		edges.add(getRotatingPoint().plus(sprite.getBackRight()));
+		edges.add(getRotatingPoint().plus(sprite.getFrontRight()));
+		edges.add(getRotatingPoint().plus(sprite.getFrontLeft()));
 				
 		return edges;
 	}
@@ -130,7 +130,7 @@ public class Bike {
 	public boolean isCollision(SimpleMatrix otherPos, double radius, ArrayList<SimpleMatrix> other) {
 		
 		boolean bodyProximity = getCenter().minus(otherPos).normF() < 60 + radius;
-		if(true) {
+		if(bodyProximity) {
 			ArrayList<SimpleMatrix> me = getBoundingCoordinates();
 			for (int i = 0; i < me.size(); i++) {
 				for (int j = 0; j < other.size(); j++) {
@@ -142,11 +142,6 @@ public class Bike {
 			}
 		}
 		
-		/*boolean tailCollision = tail.isCollision(otherPos, radius, null);
-		if(tailCollision) {
-			return true;
-		}*/
-	
-		return false;
+		return tail.isCollision(otherPos, radius, other);
 	}
 }

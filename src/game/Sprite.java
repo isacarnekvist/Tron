@@ -33,7 +33,7 @@ public class Sprite {
 	 * @param imgHeight Height of image within file, i.e <= height of file
 	 * @param imgWidth Width of image within file, i.e <= width of file
 	 */
-	public Sprite(String filename, int imgHeight, int imgWidth) {
+	public Sprite(String filename, int imgWidth, int imgHeight) {
 		texture = loadTexture(filename);
 		fileWidth = texture.getImageWidth();
 		this.imgHeight = imgHeight;
@@ -94,7 +94,7 @@ public class Sprite {
 	 * @param posX x-coordinate of center or turning point (if set)
 	 * @param posY y-coordinate of - || -
 	 */
-	public void draw(int posX, int posY) {
+	public void draw(double posX, double posY) {
 		texture.bind();
 		glBegin(GL_QUADS);
 		{
@@ -118,18 +118,34 @@ public class Sprite {
 		return imgHeight;
 	}
 	
+	/**
+	 * Relative to rotation as origin
+	 * @return
+	 */
 	public SimpleMatrix getFrontLeft() {
 		return ur;
 	}
 	
+	/**
+	 * Relative to rotation as origin
+	 * @return
+	 */
 	public SimpleMatrix getFrontRight() {
 		return lr;
 	}
-
+	
+	/**
+	 * Relative to rotation as origin
+	 * @return
+	 */
 	public SimpleMatrix getBackLeft() {
 		return ul;
 	}
-
+	
+	/**
+	 * Relative to rotation as origin
+	 * @return
+	 */
 	public SimpleMatrix getBackRight() {
 		return ll;
 	}
