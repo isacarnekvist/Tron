@@ -67,9 +67,30 @@ public class GameController {
 		player1.turn(RIGHT);
 		player2.render(delta);
 		//player2.turn(RIGHT);
-		if (player1.isCollision(player2.getCenter(), 60, player2.getBoundingCoordinates())) {
-			System.out.println("Collision");
+		
+		// Check for collisions with all objects
+		boolean P2DidHitP1 = player1.isCollision(player2.getCenter(), 60, player2.getBoundingCoordinates());
+		boolean P1DidHitP2 = player2.isCollision(player1.getCenter(), 60, player1.getBoundingCoordinates());
+		// Decide what to do
+		if (P1DidHitP2 && !P2DidHitP1) {
+			// P1 hit P2:s tail
+			reset();
+			System.out.println("P2 won.");
+		} else if (P2DidHitP1 && !P1DidHitP2) {
+			// P2 hit P1:s tail
+			reset();
+			System.out.println("P1 won.");
+		} else if (P1DidHitP2 && P2DidHitP1) {
+			System.out.println("You're both dead.");
+			reset();
 		}
+	}
+	
+	private void reset() {
+		player1 = new Bike(1, width/2 - 508, height/2 + 280);
+		player2 = new Bike(2, width/2 + 514, height/2 + 280);
+		state = START;
+		mPlayer.playTrack(START);
 	}
 
 	/**
@@ -86,10 +107,7 @@ public class GameController {
 			break;
 		default:
 			break;
-		}
-		
-		// Render
-		
+		}		
 	}
 	
 
@@ -129,10 +147,7 @@ public class GameController {
 					break;
 				case Keyboard.KEY_ESCAPE:
 					if(Keyboard.getEventKeyState()) {
-						player1 = new Bike(1, width/2 - 508, height/2 + 280);
-						player2 = new Bike(2, width/2 + 514, height/2 + 280);
-						state = START;
-						mPlayer.playTrack(START);
+						reset();
 					}
 					break;
 				}

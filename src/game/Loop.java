@@ -3,6 +3,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -34,8 +35,9 @@ public class Loop {
 	private void initGraphics() {
 		// LWJGL Setup
 		try {
-			Display.setFullscreen(true);
-			//Display.setDisplayMode(new DisplayMode(800, 640));
+			//Display.setFullscreen(true);
+			Display.setDisplayMode(new DisplayMode(1100, 700));
+			Display.setLocation(0, 0);
 			Display.setTitle("TRON-SNAKE");
 			Display.setVSyncEnabled(true);
 			Display.create();
