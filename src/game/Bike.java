@@ -108,16 +108,16 @@ public class Bike {
 	}
 
 	public boolean collision(Bike otherPlayer) {
-		otherPos = otherPlayer.getRotatingPont();
+		SimpleMatrix otherPos = otherPlayer.getRotatingPoint();
 		int x = sprite.getWidth();
 		int y = sprite.getHeight();
 		boolean xc = false;
 		boolean yc = false;
-		if (otherPos.get(X) < sprite.getFrontLeft.get(X) &&
-			otherPos.get(X) > sprite.getBackLeft.get(X))
+		if (otherPos.get(X) < sprite.getFrontLeft().get(X) &&
+			otherPos.get(X) > sprite.getBackLeft().get(X))
 			xc = true;
-		if (otherPos.get(Y) > sprite.getFrontLeft.get(Y) &&
-			otherPos.get(Y) < sprite.getFrontRight.get(X))
+		if (otherPos.get(Y) > sprite.getFrontLeft().get(Y) &&
+			otherPos.get(Y) < sprite.getFrontRight().get(X))
 			yc = true;
 		return xc && yc;
 	}
