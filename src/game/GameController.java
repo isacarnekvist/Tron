@@ -8,6 +8,10 @@ public class GameController {
 	private Bike player2;
 	private MusicPlayer mPlayer;
 	private Sprite logo;
+	private Sprite key_a;
+	private Sprite key_d;
+	private Sprite key_left;
+	private Sprite key_right;
 	private int width, height;				// Screen pixels height and width
 	
 	private final int LEFT 		= -1;
@@ -16,7 +20,7 @@ public class GameController {
 
 	private final int START = -1;
 	private final int GAME 	= 0;
-	private final int END 	= 1;
+	//private final int END 	= 1;
 	private int state;
 
 	public GameController(int maxX, int maxY) {
@@ -28,6 +32,10 @@ public class GameController {
 		player1 = new Bike(1, maxX/2 - 508, maxY/2 + 280);
 		player2 = new Bike(2, maxX/2 + 514, maxY/2 + 280);
 		logo = new Sprite("res/logo.png", 234, 1024);
+		key_a = new Sprite("res/key_a.png", 40, 64);
+		key_d = new Sprite("res/key_d.png", 40, 64);
+		key_left = new Sprite("res/key_left.png", 40, 64);
+		key_right = new Sprite("res/key_right.png", 40, 64);
 		state = START;
 	}
 	
@@ -38,8 +46,16 @@ public class GameController {
 	private void renderStartScreen(int delta) {
 		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos()); 
 		logo.draw(width/2, 300);
+		
+		// Player 1
+		key_a.draw((int)player1.getRotatingPoint().get(0) - 67, (int)player1.getRotatingPoint().get(1) - 60);
 		player1.render(0);
+		key_d.draw((int)player1.getRotatingPoint().get(0) + 63, (int)player1.getRotatingPoint().get(1) - 60);
+
+		// Player 2
+		key_left.draw((int)player2.getRotatingPoint().get(0) - 67, (int)player2.getRotatingPoint().get(1) - 60);
 		player2.render(0);
+		key_right.draw((int)player2.getRotatingPoint().get(0) + 63, (int)player2.getRotatingPoint().get(1) - 60);
 	}
 	
 	private void renderGameScreen(int delta) {
