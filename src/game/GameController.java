@@ -9,6 +9,7 @@ public class GameController {
 	private MusicPlayer mPlayer;
 	private Sprite logo;
 	private int width, height;				// Screen pixels height and width
+	Map map;
 	
 	private final int LEFT 		= -1;
 	private final int STRAIGHT 	= 0;
@@ -29,6 +30,7 @@ public class GameController {
 		player2 = new Bike(2, maxX/2 + 514, maxY/2 + 280);
 		logo = new Sprite("res/logo.png", 234, 1024);
 		state = START;
+		map = new Map(player1, player2);
 	}
 	
 
@@ -48,6 +50,7 @@ public class GameController {
 		player1.turn(RIGHT);
 		player2.render(delta);
 		//player2.turn(RIGHT);
+		map.collisions();
 	}
 
 	/**
