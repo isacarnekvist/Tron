@@ -14,7 +14,9 @@ public class Bike {
 	
 	// Turning variables and constants
 	private int turning;
+	private final int LEFT = -1;
 	private final int STRAIGHT = 0;
+	private final int RIGHT = 1;
 	private final double turningSpeed = 1.3*Math.PI;	// radians per second
 	
 	// Other constants
@@ -40,9 +42,7 @@ public class Bike {
 			pos = new SimpleMatrix(1, 2, true, posX, posY);
 			break;
 		default:
-			System.err.println("Bike constructor: player should be 1 or 2.");
-			System.exit(1);
-			break;
+			throw new IllegalArgumentException("Bike constructor: player should be 1 or 2.");
 		}
 		
 		vel = new SimpleMatrix(1, 2, true, 0, -normalSpeed);
@@ -57,10 +57,21 @@ public class Bike {
 	 * @param direction -1 = LEFT, 0 = STRAIGHT, 1 = RIGHT
 	 */
 	public void turn(int direction) {
-		turning = direction;
+		if(direction == LEFT || direction == STRAIGHT || direction == RIGHT) {
+			turning = direction;
+		} else {
+			throw new IllegalArgumentException("direction should be -1, 0 or 1.");
+		}
 	}
-		
+	
+	/**
+	 * Render next this bike to next frame, also calculate change depending on delta value.
+	 * @param delta The time in ms since last frame >= 0
+	 */
 	public void render(int delta) {
+		if (delta < 0) {
+			throw new IllegalArgumentException("delta should be > 0"); // Undefined behavior
+		}
 		double deltaAngle = turning*turningSpeed*delta/1000;
 		angle += deltaAngle;
 		tail.push(pos, angle);
@@ -82,6 +93,9 @@ public class Bike {
 		vel = vel.mult(rot);
 	}
 	
+	/**
+	 * @return Coordinates relative to window context where this bikes center of rotation is.
+	 */
 	public SimpleMatrix getRotatingPoint() {
 		return pos;
 	}
