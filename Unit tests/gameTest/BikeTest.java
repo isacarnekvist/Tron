@@ -1,6 +1,11 @@
 package gameTest;
 import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+
 import game.Bike;
+
+import org.ejml.simple.SimpleMatrix;
 import org.junit.Before;
 import org.junit.Test;
 import org.lwjgl.opengl.Display;
@@ -38,5 +43,10 @@ public class BikeTest {
 			thrown = true;
 		}
 		assertTrue(thrown);
+	}
+	
+	@Test
+	public void testBoundingCoordinates() {
+		ArrayList<SimpleMatrix> list = bike1.getBoundingCoordinates();
 	}
 }
