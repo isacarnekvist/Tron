@@ -13,6 +13,7 @@ public class GameController {
 	private Sprite key_left;
 	private Sprite key_right;
 	private int width, height;				// Screen pixels height and width
+	Map map;
 	
 	private final int LEFT 		= -1;
 	private final int STRAIGHT 	= 0;
@@ -37,6 +38,7 @@ public class GameController {
 		key_left = new Sprite("res/key_left.png", 40, 64);
 		key_right = new Sprite("res/key_right.png", 40, 64);
 		state = START;
+		map = new Map(player1, player2);
 	}
 	
 
@@ -64,6 +66,7 @@ public class GameController {
 		player1.turn(RIGHT);
 		player2.render(delta);
 		//player2.turn(RIGHT);
+		map.collisions();
 	}
 
 	/**

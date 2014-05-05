@@ -106,5 +106,20 @@ public class Bike {
 	public SimpleMatrix getFrontCenterPos() {
 		return pos.plus( sprite.getFrontLeft().plus(sprite.getFrontRight()).scale(0.5) );
 	}
+
+	public boolean collision(Bike otherPlayer) {
+		otherPos = otherPlayer.getRotatingPont();
+		int x = sprite.getWidth();
+		int y = sprite.getHeight();
+		boolean xc = false;
+		boolean yc = false;
+		if (otherPos.get(X) < sprite.getFrontLeft.get(X) &&
+			otherPos.get(X) > sprite.getBackLeft.get(X))
+			xc = true;
+		if (otherPos.get(Y) > sprite.getFrontLeft.get(Y) &&
+			otherPos.get(Y) < sprite.getFrontRight.get(X))
+			yc = true;
+		return xc && yc;
+	}
 	
 }
