@@ -125,4 +125,12 @@ public class Sprite {
 	public SimpleMatrix getFrontRight() {
 		return lr;
 	}
+
+	public SimpleMatrix getBackLeft() {
+		return ul;
+	}
+
+	public SimpleMatrix getBackRight() {
+		return ll;
+	}
 }
