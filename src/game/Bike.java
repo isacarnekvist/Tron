@@ -1,7 +1,7 @@
 package game;
 
-
 import org.ejml.simple.SimpleMatrix;
+import java.util.ArrayList;
 
 public class Bike {
 	
@@ -32,19 +32,19 @@ public class Bike {
 		
 		switch (player) {
 		case 1:
-			sprite = new Sprite("res/bike_orange.png", 43, 105);
+			sprite = new Sprite("res/bike_orange.png", 105, 43);
 			tail = new Tail("res/tail_orange.png");
 			pos = new SimpleMatrix(1, 2, true, posX, posY);
 			break;
 		case 2:
-			sprite = new Sprite("res/bike_blue.png", 43, 105);
+			sprite = new Sprite("res/bike_blue.png", 105, 43);
 			tail = new Tail("res/tail_blue.png");
 			pos = new SimpleMatrix(1, 2, true, posX, posY);
 			break;
 		default:
 			throw new IllegalArgumentException("Bike constructor: player should be 1 or 2.");
 		}
-		
+	
 		vel = new SimpleMatrix(1, 2, true, 0, -normalSpeed);
 		angle = -Math.PI/2;
 		sprite.setRotationPoint(22, 22);
@@ -81,7 +81,7 @@ public class Bike {
 			rotateVelocity(turning*turningSpeed*delta/1000);
 		}
 		pos = pos.plus(vel.scale((double)delta/1000));
-		sprite.draw((int)pos.get(X), (int)pos.get(Y));
+		sprite.draw(pos.get(X), pos.get(Y));
 	}
 	
 	/**
@@ -100,29 +100,53 @@ public class Bike {
 		return pos;
 	}
 	
+	public SimpleMatrix getCenter() {
+		return getFrontCenterPos().minus(vel.scale(0.5*sprite.getWidth()/vel.normF()));
+	}
+	
 	/**
 	 * @return the position of the foremost edge of bike's front wheel. 
 	 */
 	public SimpleMatrix getFrontCenterPos() {
 		return pos.plus( sprite.getFrontLeft().plus(sprite.getFrontRight()).scale(0.5) );
 	}
-
-	public boolean collision(Bike otherPlayer) {
-		SimpleMatrix otherPos = otherPlayer.getRotatingPoint();
-		int x = sprite.getWidth();
-		int y = sprite.getHeight();
-		boolean xc = false;
-		boolean yc = false;
-		if (Math.abs(otherPos.get(X) - getRotatingPoint.get(X)) < 100)
-			xc = true;
-		if (Math.abs(otherPos.get(Y) - getRotatingPoint.get(Y)) < 100)
-			yc = true;
-		/*if (otherPos.get(X) < sprite.getFrontLeft().get(X) &&
-			otherPos.get(X) > sprite.getBackLeft().get(X))
-			xc = true;
-		if (otherPos.get(Y) > sprite.getFrontLeft().get(Y) &&
-			otherPos.get(Y) < sprite.getFrontRight().get(X))
-			yc = true;*/
-		return xc && yc;
+	
+	public ArrayList<SimpleMatrix> getBoundingCoordinates() {
+		ArrayList<SimpleMatrix> edges = new ArrayList<SimpleMatrix>();
+		edges.add(getCenter().plus(sprite.getBackLeft()));
+		edges.add(getCenter().plus(sprite.getBackRight()));
+		edges.add(getCenter().plus(sprite.getFrontRight()));
+		edges.add(getCenter().plus(sprite.getFrontLeft()));
+				
+		return edges;
+	}
+	
+	/**
+	 * @param otherPos Center coordinates of object to check against.
+	 * @param radius Approximate radius of circle around object to check against.
+	 * @param other List of coordinates around the object to check against.
+	 * @return
+	 */
+	public boolean isCollision(SimpleMatrix otherPos, double radius, ArrayList<SimpleMatrix> other) {
+		
+		boolean bodyProximity = getCenter().minus(otherPos).normF() < 60 + radius;
+		if(true) {
+			ArrayList<SimpleMatrix> me = getBoundingCoordinates();
+			for (int i = 0; i < me.size(); i++) {
+				for (int j = 0; j < other.size(); j++) {
+					if(Geometry.linesIntersect(me.get(i), me.get((i + 1)%me.size()), 
+											other.get(j), other.get((j + 1) % other.size()))) {
+						return true;
+					}
+				}
+			}
+		}
+		
+		/*boolean tailCollision = tail.isCollision(otherPos, radius, null);
+		if(tailCollision) {
+			return true;
+		}*/
+	
+		return false;
 	}
 }

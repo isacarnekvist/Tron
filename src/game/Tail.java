@@ -1,5 +1,7 @@
 package game;
+import java.util.ArrayList;
 import java.util.LinkedList;
+
 import org.ejml.simple.SimpleMatrix;
 
 /**
@@ -41,4 +43,22 @@ public class Tail {
 		}
 	}
 	
+	/**
+	 * @param otherPos Center coordinates of object to check against.
+	 * @param radius Approximate radius of circle around object to check against.
+	 * @param shape List of coordinates around the object to check against.
+	 * @return
+	 */
+	public boolean isCollision(SimpleMatrix otherPos, double radius, ArrayList<SimpleMatrix> shape) {
+		SimpleMatrix checker;
+		
+		for (int i = 0; i < tail.size(); i += 20) {
+			checker = new SimpleMatrix(1, 2, true, tail.get(i).get(0), tail.get(i).get(1));
+			if (checker.minus(otherPos).normF() < radius) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }

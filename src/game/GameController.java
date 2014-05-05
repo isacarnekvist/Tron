@@ -8,12 +8,12 @@ public class GameController {
 	private Bike player2;
 	private MusicPlayer mPlayer;
 	private Sprite logo;
+	private Sprite info_enter;
 	private Sprite key_a;
 	private Sprite key_d;
 	private Sprite key_left;
 	private Sprite key_right;
 	private int width, height;				// Screen pixels height and width
-	Map map;
 	
 	private final int LEFT 		= -1;
 	private final int STRAIGHT 	= 0;
@@ -32,13 +32,13 @@ public class GameController {
 		mPlayer.playTrack(START);
 		player1 = new Bike(1, maxX/2 - 508, maxY/2 + 280);
 		player2 = new Bike(2, maxX/2 + 514, maxY/2 + 280);
-		logo = new Sprite("res/logo.png", 234, 1024);
-		key_a = new Sprite("res/key_a.png", 40, 64);
-		key_d = new Sprite("res/key_d.png", 40, 64);
-		key_left = new Sprite("res/key_left.png", 40, 64);
-		key_right = new Sprite("res/key_right.png", 40, 64);
+		logo = new Sprite("res/logo.png", 1024, 234);
+		info_enter = new Sprite("res/info_enter.png", 1024, 40);
+		key_a = new Sprite("res/key_a.png", 64, 40);
+		key_d = new Sprite("res/key_d.png", 64, 40);
+		key_left = new Sprite("res/key_left.png", 64, 40);
+		key_right = new Sprite("res/key_right.png", 64, 40);
 		state = START;
-		map = new Map(player1, player2);
 	}
 	
 
@@ -48,6 +48,7 @@ public class GameController {
 	private void renderStartScreen(int delta) {
 		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos()); 
 		logo.draw(width/2, 300);
+		info_enter.draw(width/2, 500);
 		
 		// Player 1
 		key_a.draw((int)player1.getRotatingPoint().get(0) - 67, (int)player1.getRotatingPoint().get(1) - 60);
@@ -66,7 +67,9 @@ public class GameController {
 		player1.turn(RIGHT);
 		player2.render(delta);
 		//player2.turn(RIGHT);
-		map.collisions();
+		if (player1.isCollision(player2.getCenter(), 60, player2.getBoundingCoordinates())) {
+			System.out.println("Collision");
+		}
 	}
 
 	/**
