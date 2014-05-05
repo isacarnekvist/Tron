@@ -13,7 +13,7 @@ public class Map {
 	public boolean collisions() {
 		boolean collision = player1.collision(player2);
 		if (collision) {
-			System.err.print("Collision!");
+			System.out.print("Collision!");
 		}
 		return collision;
 	}
