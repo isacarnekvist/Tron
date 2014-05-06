@@ -56,13 +56,13 @@ public class Tail {
 			return false;
 		}
 		
-		for (int i = 0; i < tail.size(); i += 20) {
+		for (int i = 60; i < tail.size(); i += 10) {
 			checker = new SimpleMatrix(1, 2, true, tail.get(i).get(0), tail.get(i).get(1));
 			if (checker.minus(otherPos).normF() < radius + 40) { // Approximate checking
 				// Now, precise checking
-				for(int j = 10; j < tail.size() - 10; j += 10) {
+				for(int j = 10; j < tail.size() - 3; j += 3) {
 					for(int z = 0; z < shape.size(); z++) {
-						if(Geometry.linesIntersect(tail.get(j - 5), tail.get(j + 5),
+						if(Geometry.linesIntersect(tail.get(j - 3), tail.get(j + 3),
 								shape.get(z), shape.get((z + 1) % shape.size()))) {
 							return true;
 						}
