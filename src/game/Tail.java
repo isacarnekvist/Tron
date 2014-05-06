@@ -73,4 +73,12 @@ public class Tail {
 		
 		return false;
 	}
+
+	public void setLength(int length) {
+		this.length = length;
+	}
+
+	public void getLength() {
+		return length;
+	}
 }
