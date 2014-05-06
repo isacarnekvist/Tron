@@ -154,4 +154,8 @@ public class Bike {
 			return false;
 		}
 	}
+	
+	public boolean checkOwnTail() {
+		return tail.isCollision(getCenter(), 60, getBoundingCoordinates());
+	}
 }
