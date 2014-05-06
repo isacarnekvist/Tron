@@ -79,8 +79,8 @@ public class GameController {
 		// Check for collisions with all objects, Factor out?
 		boolean P2DidHitP1 = player1.isCollision(player2.getCenter(), 60, player2.getBoundingCoordinates());
 		boolean P1DidHitP2 = player2.isCollision(player1.getCenter(), 60, player1.getBoundingCoordinates());
-		boolean P1Suicide = player1.isCollision(player1.getCenter(), 60, player1.getBoundingCoordinates());
-		boolean P2Suicide = player2.isCollision(player2.getCenter(), 60, player2.getBoundingCoordinates());
+		boolean P1Suicide = player1.checkOwnTail();
+		boolean P2Suicide = player2.checkOwnTail();		
 		boolean P1DidHitWall = player1.isCollision(null, width*2, screenBounds);
 		boolean P2DidHitWall = player2.isCollision(null, width*2, screenBounds);
 		// Decide what to do
@@ -102,7 +102,7 @@ public class GameController {
 			System.out.println("Player 2 is dead.");
 			reset();
 		} else if (P1Suicide || P2Suicide) {
-			// reset(); Fuck, this isn't working TODO
+			reset(); // Fuck, this isn't working TODO
 		}
 	}
 	

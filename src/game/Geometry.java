@@ -8,6 +8,19 @@ public class Geometry {
 	private static final int Y = 1;
 	
 	/**
+	 * @param p1
+	 * @param p1radius
+	 * @param p2
+	 * @param p2radius
+	 * @return
+	 */
+	public static boolean circlesIntersect(SimpleMatrix p1, double p1radius,
+										   SimpleMatrix p2, double p2radius) {
+		
+		return p1.minus(p2).normF() < p1radius + p2radius;
+	}
+	
+	/**
 	 * Checks too see if two lines intersect
 	 * @param l1p1 Point 1 coordinates of line 1
 	 * @param l1p2 Point 2 coordinates of line 1

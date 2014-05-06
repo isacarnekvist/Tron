@@ -35,7 +35,7 @@ public class Loop {
 	private void initGraphics() {
 		// LWJGL Setup
 		try {
-			//Display.setFullscreen(true);
+			Display.setFullscreen(true);
 			Display.setDisplayMode(new DisplayMode(1100, 700));
 			Display.setLocation(0, 0);
 			Display.setTitle("TRON-SNAKE");
