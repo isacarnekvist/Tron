@@ -57,14 +57,19 @@ public class Tail {
 			if (checker.minus(otherPos).normF() < radius) { // Approximate checking
 				// Now more careful testing
 				for(int j = 0; j < shape.size(); j++) {
-					if(i + 5 < tail.size()) {
+					if(i + 10 < tail.size() && i - 10 >= 0){
 						if(Geometry.linesIntersect(shape.get(j), shape.get((j + 1) % shape.size()),
-												tail.get(i), tail.get(i + 5))) {
+												tail.get(i - 10), tail.get(i + 10))) {
+							return true;
+						}
+					} else if (i - 10 < 0) {
+						if(Geometry.linesIntersect(shape.get(j), shape.get((j + 1) % shape.size()),
+								tail.get(i), tail.get(i + 10))) {
 							return true;
 						}
 					} else {
 						if(Geometry.linesIntersect(shape.get(j), shape.get((j + 1) % shape.size()),
-								tail.get(i), tail.get(i - 5))) {
+								tail.get(i), tail.get(i - 10))) {
 							return true;
 						}
 					}
