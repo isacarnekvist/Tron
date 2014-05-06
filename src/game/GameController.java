@@ -95,7 +95,7 @@ public class GameController {
 			p.render();
 		}
 		
-		player1.render(delta);
+		//player1.render(delta);
 		//player1.turn(RIGHT);
 		player2.render(delta);
 		//player2.turn(RIGHT);
