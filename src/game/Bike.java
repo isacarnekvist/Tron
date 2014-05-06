@@ -158,13 +158,13 @@ public class Bike {
 	public void powerup(Powerup p) {
 		switch (p.getType()) {
 		case "Speed":
-			vel.scale(1.5);
+			vel = vel.scale(1.1);
 			break;
 		case "Slow":
-			vel.scale(0.5);
+			vel = vel.scale(0.5);
 			break;
 		case "Longer":
-			tail.setLength(tail.getLength() + 50);
+			tail.setLength(tail.getLength() + 30);
 			break;
 		case "Shorter":
 			tail.setLength(tail.getLength() - 50);

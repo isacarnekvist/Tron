@@ -95,8 +95,8 @@ public class GameController {
 			p.render();
 		}
 		
-		//player1.render(delta);
-		player1.turn(RIGHT);
+		player1.render(delta);
+		//player1.turn(RIGHT);
 		player2.render(delta);
 		//player2.turn(RIGHT);
 
@@ -109,7 +109,7 @@ public class GameController {
 	 * Reset to start screen
 	 */
 	private void reset() {
-		//player1 = new Bike(1, width/2 - 508, height/2 + 280);
+		player1 = new Bike(1, width/2 - 508, height/2 + 280);
 		player2 = new Bike(2, width/2 + 514, height/2 + 280);
 		state = START;
 		mPlayer.playTrack(START);
@@ -172,6 +172,7 @@ public class GameController {
 		while(it.hasNext()){
 			Powerup p = it.next();
 			if(player.isCollision(p.getPos(), 26, p.getBoundingCoordinates())) {
+				player.powerup(p);
 				it.remove();
 			}
 		}

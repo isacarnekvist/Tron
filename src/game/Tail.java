@@ -20,7 +20,7 @@ public class Tail {
 	public Tail(String filename) {
 		tail = new LinkedList<SimpleMatrix>();
 		sprite = new TailSprite(filename);
-		length = 150;
+		length = 100;
 	}
 	
 	/**
