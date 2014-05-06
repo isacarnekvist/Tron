@@ -20,7 +20,7 @@ public class Tail {
 	public Tail(String filename) {
 		tail = new LinkedList<SimpleMatrix>();
 		sprite = new TailSprite(filename);
-		length = 150;
+		length = 500;
 	}
 	
 	/**
@@ -52,19 +52,18 @@ public class Tail {
 	public boolean isCollision(SimpleMatrix otherPos, double radius, ArrayList<SimpleMatrix> shape) {
 		SimpleMatrix checker;
 		
+		if(tail.size() < 100) {
+			return false;
+		}
+		
 		for (int i = 0; i < tail.size(); i += 20) {
 			checker = new SimpleMatrix(1, 2, true, tail.get(i).get(0), tail.get(i).get(1));
-			if (checker.minus(otherPos).normF() < radius) { // Approximate checking
-				// Now more careful testing
-				for(int j = 0; j < shape.size(); j++) {
-					if(i + 5 < tail.size()) {
-						if(Geometry.linesIntersect(shape.get(j), shape.get((j + 1) % shape.size()),
-												tail.get(i), tail.get(i + 5))) {
-							return true;
-						}
-					} else {
-						if(Geometry.linesIntersect(shape.get(j), shape.get((j + 1) % shape.size()),
-								tail.get(i), tail.get(i - 5))) {
+			if (checker.minus(otherPos).normF() < radius + 40) { // Approximate checking
+				// Now, precise checking
+				for(int j = 10; j < tail.size() - 10; j += 10) {
+					for(int z = 0; z < shape.size(); z++) {
+						if(Geometry.linesIntersect(tail.get(j - 5), tail.get(j + 5),
+								shape.get(z), shape.get((z + 1) % shape.size()))) {
 							return true;
 						}
 					}

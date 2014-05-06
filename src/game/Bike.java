@@ -154,6 +154,7 @@ public class Bike {
 			return false;
 		}
 	}
+<<<<<<< HEAD
 
 
 	/**
@@ -176,5 +177,10 @@ public class Bike {
 			break;
 		default:
 			break;
+=======
+	
+	public boolean checkOwnTail() {
+		return tail.isCollision(getCenter(), 60, getBoundingCoordinates());
+>>>>>>> 3c6f8e63f97e2d73ad5d599ced1e12b3f48479c8
 	}
 }
