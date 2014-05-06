@@ -1,25 +1,24 @@
 package game;
 import org.lwjgl.input.Keyboard;
 import org.ejml.simple.*;
+
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
 import java.util.Stack;
 
 public class GameController {
 	
 	private Grid grid;
-	private Bike player1;
-	private Bike player2;
+	private Bike player1, player2;
 	private MusicPlayer mPlayer;
 	private Sprite logo;
 	private Sprite info_enter;
-	private Sprite key_a;
-	private Sprite key_d;
-	private Sprite key_left;
-	private Sprite key_right;
+	private Sprite key_a, key_d, key_left, key_right;
 	private int width, height;				// Screen pixels height and width
 	private ArrayList<SimpleMatrix> screenBounds;
 	private Random r;
-	private Stack<Powerup> powerups;
+	private ArrayList<Powerup> powerups;
 	
 	private final int LEFT 		= -1;
 	private final int STRAIGHT 	= 0;
@@ -29,9 +28,6 @@ public class GameController {
 	private final int GAME 	= 0;
 	//private final int END 	= 1;
 	private int state;
-
-	private final int X = 0;
-	private final int Y = 1;
 
 	public GameController(int maxX, int maxY) {
 
@@ -44,7 +40,7 @@ public class GameController {
 		player1 = new Bike(1, maxX/2 - 508, maxY/2 + 280);
 		player2 = new Bike(2, maxX/2 + 514, maxY/2 + 280);
 		r = new Random();
-		powerups = new Stack<Powerup>();
+		powerups = new ArrayList<Powerup>();
 
 		// Load sprites
 		logo = new Sprite("res/logo.png", 1024, 234);
@@ -83,35 +79,45 @@ public class GameController {
 		key_right.draw((int)player2.getRotatingPoint().get(0) + 64, (int)player2.getRotatingPoint().get(1) - 60);
 	}
 	
+	/**
+	 * Renders the screen where actual playing happens.
+	 * @param delta Time in ms since last frame
+	 */
 	private void renderGameScreen(int delta) {
-		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos()); 
-		player1.render(delta);
-		//player1.turn(RIGHT);
-		player2.render(delta);
-		//player2.turn(RIGHT);
 		
-		if (r.nextInt(200) % 7 == 0) {
-			powerups.push(new Powerup(new SimpleMatrix(width, height)));
+		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos()); 
+		
+		if (powerups.size() == 0) {
+			powerups.add(new Powerup(width, height));
 		}
 
 		for (Powerup p : powerups) {
 			p.render();
 		}
+		
+		//player1.render(delta);
+		player1.turn(RIGHT);
+		player2.render(delta);
+		//player2.turn(RIGHT);
 
 		checkForBikeCollisions();
+		checkforPowerupCollisions(player1);
+		checkforPowerupCollisions(player2);
 	}
 	
 	/**
 	 * Reset to start screen
 	 */
 	private void reset() {
-		player1 = new Bike(1, width/2 - 508, height/2 + 280);
+		//player1 = new Bike(1, width/2 - 508, height/2 + 280);
 		player2 = new Bike(2, width/2 + 514, height/2 + 280);
 		state = START;
 		mPlayer.playTrack(START);
+		powerups.clear();
 	}
 
 	/**
+	 * Render current state to screen.
 	 * @param delta Time since last render in ms.
 	 */
 	public void render(int delta) {
@@ -157,32 +163,20 @@ public class GameController {
 			System.out.println("Player 2 is dead.");
 			reset();
 		} else if (P1Suicide || P2Suicide) {
-			reset(); // Fuck, this isn't working TODO
+			reset();
 		}
 	}
 
 	private void checkforPowerupCollisions(Bike player) {
-		for (Powerup p : powerups) {
-			for (SimpleMatrix c : player.getBoundingCoordinates()) {
-				if (p.isCollision(c, 64, getPoints(p.getPos()))) {
-					player.powerup(p);
-				}
+		Iterator<Powerup> it = powerups.iterator();
+		while(it.hasNext()){
+			Powerup p = it.next();
+			if(player.isCollision(p.getPos(), 26, p.getBoundingCoordinates())) {
+				it.remove();
 			}
 		}
 	}
-	private ArrayList<SimpleMatrix> getPoints(SimpleMatrix pos) {
-		int r = 64;
-		ArrayList<SimpleMatrix> points = new ArrayList<>();
-		for (int i = 0; i < 6; i++) {
-			i *= Math.PI/3;
-			points.add(new SimpleMatrix(
-				pos.get(X) + r * math.cos(i),
-				pos.get(Y) + r * math.sin(i)
-			));
-		}
-		return points;
-	}
-
+	
 
 	/**
 	 * Checks for keyboard events and acts on them. Specifically, it tells

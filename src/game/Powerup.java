@@ -1,50 +1,50 @@
 package game;
 
 import org.ejml.simple.SimpleMatrix;
-import java.lang.Math;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 
 public class Powerup {
-	private Sprite Sprite;
+	private Sprite sprite;
 	private SimpleMatrix pos;
-	private int good; // >= 0 = good powerup, < 0 = bad powerup (unnecessary?)
 	static Random r = new Random();
 
 
 	private final int X = 0;
 	private final int Y = 1;
 
-	private final String type;
-	private final String[] TYPES = {
+	private String type;
+	private final String[] types = {
 		"Speed",
-		"Slow",
-		// "Glitch",
 		"Longer",
+		// "Glitch",
+		"Slow",
 		"Shorter"
-	}
+	};
 
 	/**
 	 * @param area The area in which to spawn
 	 */
-	public Powerup(SimpleMatrix area) {
-		good = r.nextInt();
-		pos = new SimpleMatrix(
-            r.nextInt(area.get(X) - 100),
-            r.nextInt(area.get(Y) - 100)
+	public Powerup(int width, int height) {
+		pos = new SimpleMatrix(1, 2, true,
+            100 + r.nextInt(width - 200),
+            100 + r.nextInt(height - 200)
         );
-		type = r.nextInt(TYPES.length);
+		type = types[r.nextInt(2)];
 		switch (type) {
 		case "Speed":
-			sprite = new Sprite("res/powerup.png", 64, 64);
-			break;
-		case "Slow":
-			sprite = new Sprite("res/powerup.png", 64, 64);
+			sprite = new Sprite("res/powerup_speed.png", 52, 52);
 			break;
 		case "Longer":
-			sprite = new Sprite("res/powerup.png", 64, 64);
+			sprite = new Sprite("res/powerup_length.png", 52, 52);
+			break;
+		case "Slow":
+			sprite = new Sprite("res/powerup_speed.png", 52, 52);
 			break;
 		case "Shorter":
-			sprite = new Sprite("res/powerup.png", 64, 64);
+			sprite = new Sprite("res/powerup_speed.png", 52, 52);
 			break;
 		default:
 			break;
@@ -66,49 +66,24 @@ public class Powerup {
 	public void pickup() {
 
 	}
-
-    /**
-     * @param otherPos Center coordinates of object to check against. OK to send null.
-     * @param radius Approximate radius of circle around object to check against.
-     * @param other List of coordinates around the object to check against.
-     * @return
-     */
-    public boolean isCollision(
-        SimpleMatrix otherPos,
-        double radius,
-        ArrayList<SimpleMatrix> other) {
-        
-        boolean bodyProximity;
-        
-        if (otherPos == null) {
-            bodyProximity = true;
-        } else {
-            bodyProximity = getCenter().minus(otherPos).normF() < 60 + radius;
-        }
-        if(bodyProximity) {
-            ArrayList<SimpleMatrix> me = getBoundingCoordinates();
-            for (int i = 0; i < me.size(); i++) {
-                for (int j = 0; j < other.size(); j++) {
-                    if(Geometry.linesIntersect(me.get(i), me.get((i + 1)%me.size()), 
-                                            other.get(j), other.get((j + 1) % other.size()))) {
-                        return true;
-                    }
-                }
-            }
-        }
-        
-        if(otherPos != null) {
-            return tail.isCollision(otherPos, radius, other);
-        } else {
-            return false;
-        }
-    }
+	
+	/**
+	 * @return An arraylist with coordinates surrounding this powerup.
+	 */
+	public ArrayList<SimpleMatrix> getBoundingCoordinates() {
+		ArrayList<SimpleMatrix> res = new ArrayList<SimpleMatrix>();
+		for(int i = 0; i < 6; i++) {
+			res.add(new SimpleMatrix(1, 2, true, pos.get(X) + 26*Math.cos(i*Math.PI/3), 
+												 pos.get(Y) + 26*Math.sin(i*Math.PI/3)));
+		}
+		return res;
+	}
 
     public SimpleMatrix getPos() {
         return pos;
     }
 
-    public getType() {
+    public String getType() {
         return type;
     }
 }

@@ -134,7 +134,7 @@ public class Bike {
 		if (otherPos == null) {
 			bodyProximity = true;
 		} else {
-			bodyProximity = getCenter().minus(otherPos).normF() < 60 + radius;
+			bodyProximity = getCenter().minus(otherPos).normF() < 100 + radius;
 		}
 		if(bodyProximity) {
 			ArrayList<SimpleMatrix> me = getBoundingCoordinates();
@@ -154,33 +154,27 @@ public class Bike {
 			return false;
 		}
 	}
-<<<<<<< HEAD
 
-
-	/**
-	 * Áctivate a powerup on this player
-	 */
 	public void powerup(Powerup p) {
 		switch (p.getType()) {
 		case "Speed":
-			speed += 250;
+			vel.scale(1.5);
 			break;
 		case "Slow":
-			speed -= 250;
+			vel.scale(0.5);
 			break;
 		case "Longer":
 			tail.setLength(tail.getLength() + 50);
 			break;
-		}
 		case "Shorter":
 			tail.setLength(tail.getLength() - 50);
 			break;
 		default:
 			break;
-=======
+		}
+	}
 	
 	public boolean checkOwnTail() {
 		return tail.isCollision(getCenter(), 60, getBoundingCoordinates());
->>>>>>> 3c6f8e63f97e2d73ad5d599ced1e12b3f48479c8
 	}
 }
