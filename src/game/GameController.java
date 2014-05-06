@@ -2,6 +2,7 @@ package game;
 import org.lwjgl.input.Keyboard;
 import org.ejml.simple.*;
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class GameController {
 	
@@ -17,6 +18,8 @@ public class GameController {
 	private Sprite key_right;
 	private int width, height;				// Screen pixels height and width
 	private ArrayList<SimpleMatrix> screenBounds;
+	private Random r;
+	private Stack<Powerup> powerups;
 	
 	private final int LEFT 		= -1;
 	private final int STRAIGHT 	= 0;
@@ -27,7 +30,12 @@ public class GameController {
 	//private final int END 	= 1;
 	private int state;
 
+	private final int X = 0;
+	private final int Y = 1;
+
 	public GameController(int maxX, int maxY) {
+
+		// Assign variables
 		width = maxX;
 		height = maxY;
 		grid = new Grid(maxX, maxY);
@@ -35,12 +43,18 @@ public class GameController {
 		mPlayer.playTrack(START);
 		player1 = new Bike(1, maxX/2 - 508, maxY/2 + 280);
 		player2 = new Bike(2, maxX/2 + 514, maxY/2 + 280);
+		r = new Random();
+		powerups = new Stack<Powerup>();
+
+		// Load sprites
 		logo = new Sprite("res/logo.png", 1024, 234);
 		info_enter = new Sprite("res/info_enter.png", 1024, 40);
 		key_a = new Sprite("res/key_a.png", 64, 40);
 		key_d = new Sprite("res/key_d.png", 64, 40);
 		key_left = new Sprite("res/key_left.png", 64, 40);
 		key_right = new Sprite("res/key_right.png", 64, 40);
+
+		// Add Screenbounds
 		screenBounds = new ArrayList<SimpleMatrix>();
 		screenBounds.add(new SimpleMatrix(1, 2, true, 0, 0));
 		screenBounds.add(new SimpleMatrix(1, 2, true, 0, height));
@@ -76,7 +90,48 @@ public class GameController {
 		player2.render(delta);
 		//player2.turn(RIGHT);
 		
-		// Check for collisions with all objects, Factor out?
+		if (r.nextInt(200) % 7 == 0) {
+			powerups.push(new Powerup(new SimpleMatrix(width, height)));
+		}
+
+		for (Powerup p : powerups) {
+			p.render();
+		}
+
+		checkForBikeCollisions();
+	}
+	
+	/**
+	 * Reset to start screen
+	 */
+	private void reset() {
+		player1 = new Bike(1, width/2 - 508, height/2 + 280);
+		player2 = new Bike(2, width/2 + 514, height/2 + 280);
+		state = START;
+		mPlayer.playTrack(START);
+	}
+
+	/**
+	 * @param delta Time since last render in ms.
+	 */
+	public void render(int delta) {
+		checkForEvents();
+		switch (state) {
+		case START:
+			renderStartScreen(delta);
+			break;
+		case GAME:
+			renderGameScreen(delta);
+			break;
+		default:
+			break;
+		}		
+	}
+	
+	/**
+	 * Check for collisions with all objects
+	 */
+	private void checkForBikeCollisions() {
 		boolean P2DidHitP1 = player1.isCollision(player2.getCenter(), 60, player2.getBoundingCoordinates());
 		boolean P1DidHitP2 = player2.isCollision(player1.getCenter(), 60, player1.getBoundingCoordinates());
 		boolean P1Suicide = player1.isCollision(player1.getCenter(), 60, player1.getBoundingCoordinates());
@@ -105,31 +160,29 @@ public class GameController {
 			// reset(); Fuck, this isn't working TODO
 		}
 	}
-	
-	private void reset() {
-		player1 = new Bike(1, width/2 - 508, height/2 + 280);
-		player2 = new Bike(2, width/2 + 514, height/2 + 280);
-		state = START;
-		mPlayer.playTrack(START);
+
+	private void checkforPowerupCollisions(Bike player) {
+		for (Powerup p : powerups) {
+			for (SimpleMatrix c : player.getBoundingCoordinates()) {
+				if (p.isCollision(c, 64, getPoints(p.getPos()))) {
+					player.powerup(p);
+				}
+			}
+		}
+	}
+	private ArrayList<SimpleMatrix> getPoints(SimpleMatrix pos) {
+		int r = 64;
+		ArrayList<SimpleMatrix> points = new ArrayList<>();
+		for (int i = 0; i < 6; i++) {
+			i *= Math.PI/3;
+			points.add(new SimpleMatrix(
+				pos.get(X) + r * math.cos(i),
+				pos.get(Y) + r * math.sin(i)
+			));
+		}
+		return points;
 	}
 
-	/**
-	 * @param delta Time since last render in ms.
-	 */
-	public void render(int delta) {
-		checkForEvents();
-		switch (state) {
-		case START:
-			renderStartScreen(delta);
-			break;
-		case GAME:
-			renderGameScreen(delta);
-			break;
-		default:
-			break;
-		}		
-	}
-	
 
 	/**
 	 * Checks for keyboard events and acts on them. Specifically, it tells
@@ -200,4 +253,10 @@ public class GameController {
 		return state;
 	}
 	
+	/**
+	 * @return the size of the grid
+	 */
+	public SimpleMatrix getGridSize() {
+		return new SimpleMatrix(width, height);
+	}
 }
