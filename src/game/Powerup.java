@@ -86,4 +86,8 @@ public class Powerup {
     public String getType() {
         return type;
     }
+    
+    public int getRadius() {
+    	return sprite.getWidth()/2;
+    }
 }
