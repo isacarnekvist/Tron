@@ -12,15 +12,19 @@ public class GameController {
 	private Grid grid;
 	private Bike player1, player2;
 	private MusicPlayer mPlayer;
-	private Sprite logo;
-	private Sprite info_enter;
-	private Sprite key_a, key_d, key_left, key_right;
-	private Sprite end_winner, end_loser;
+	private int winner;						// Who won the last game?
 	private int width, height;				// Screen pixels height and width
 	private ArrayList<SimpleMatrix> screenBounds;
 	private Random r;
 	private ArrayList<Powerup> powerups;
 	
+	// Sprites
+	private Sprite logo;
+	private Sprite info_enter;
+	private Sprite key_a, key_d, key_left, key_right;
+	private Sprite end_winner, end_loser;
+	
+	// Constants
 	private final int LEFT 		= -1;
 	private final int STRAIGHT 	= 0;
 	private final int RIGHT 	= 1;
@@ -28,6 +32,10 @@ public class GameController {
 	private final int START = -1;
 	private final int GAME 	= 0;
 	//private final int END 	= 1;
+	
+	private final int NOGAMEPLAYED = 0;
+	private final int PLAYER1 = 1;
+	private final int PLAYER2 = 2;
 	private int state;
 
 	public GameController(int maxX, int maxY) {
@@ -75,13 +83,26 @@ public class GameController {
 		key_a.draw((int)player1.getRotatingPoint().get(0) - 67, (int)player1.getRotatingPoint().get(1) - 60);
 		player1.render(0);
 		key_d.draw((int)player1.getRotatingPoint().get(0) + 63, (int)player1.getRotatingPoint().get(1) - 60);
-		end_winner.draw(player1.getCenter());
 
 		// Player 2
 		key_left.draw((int)player2.getRotatingPoint().get(0) - 67, (int)player2.getRotatingPoint().get(1) - 60);
 		player2.render(0);
 		key_right.draw((int)player2.getRotatingPoint().get(0) + 64, (int)player2.getRotatingPoint().get(1) - 60);
-		end_loser.draw(player2.getCenter());
+		
+		switch (winner) {
+		case NOGAMEPLAYED:
+			
+			break;
+		case PLAYER1:
+			end_winner.draw(player1.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 100)));
+			end_loser.draw(player2.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 100)));
+			break;
+			
+		case PLAYER2:
+			end_winner.draw(player2.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 100)));
+			end_loser.draw(player1.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 100)));
+			break;
+		}
 	}
 	
 	/**
@@ -92,15 +113,19 @@ public class GameController {
 		
 		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos()); 
 		
-		if (powerups.size() == 0) {
-			powerups.add(new Powerup(width, height));
+		while (powerups.size() == 0) {
+			Powerup p = new Powerup(width, height);
+			if(!player1.isCollision(p.getPos(), p.getRadius(), p.getBoundingCoordinates()) &&
+					!player2.isCollision(p.getPos(), p.getRadius(), p.getBoundingCoordinates())) {
+				powerups.add(p);
+			}
 		}
 
 		for (Powerup p : powerups) {
 			p.render();
 		}
 		
-		//player1.render(delta);
+		player1.render(delta);
 		//player1.turn(RIGHT);
 		player2.render(delta);
 		//player2.turn(RIGHT);
@@ -152,10 +177,12 @@ public class GameController {
 		// Decide what to do
 		if (P1DidHitP2 && !P2DidHitP1) {
 			// P1 hit P2:s tail
+			winner = PLAYER2;
 			reset();
 			System.out.println("P2 won.");
 		} else if (P2DidHitP1 && !P1DidHitP2) {
 			// P2 hit P1:s tail
+			winner = PLAYER1;
 			reset();
 			System.out.println("P1 won.");
 		} else if (P1DidHitP2 && P2DidHitP1) {
@@ -163,11 +190,17 @@ public class GameController {
 			reset();
 		} else if (P1DidHitWall) {
 			System.out.println("Player 1 is dead.");
+			winner = PLAYER2;
 			reset();
 		} else if (P2DidHitWall) {
 			System.out.println("Player 2 is dead.");
+			winner = PLAYER1;
 			reset();
-		} else if (P1Suicide || P2Suicide) {
+		} else if (P1Suicide) {
+			winner = PLAYER2;
+			reset();
+		} else if (P2Suicide) {
+			winner = PLAYER1;
 			reset();
 		}
 	}
@@ -244,19 +277,5 @@ public class GameController {
 				player.turn(STRAIGHT);
 			}
 		}
-	}
-
-	/**
-	 * @return the current state
-	 */
-	public int getState() {
-		return state;
-	}
-	
-	/**
-	 * @return the size of the grid
-	 */
-	public SimpleMatrix getGridSize() {
-		return new SimpleMatrix(width, height);
 	}
 }
