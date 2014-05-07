@@ -125,7 +125,7 @@ public class GameController {
 			p.render();
 		}
 		
-		player1.render(delta);
+		//player1.render(delta);
 		//player1.turn(RIGHT);
 		player2.render(delta);
 		//player2.turn(RIGHT);
@@ -225,15 +225,9 @@ public class GameController {
 		
 		switch (state) {
 		case START:
-			while(Keyboard.next()) {
-				switch (Keyboard.getEventKey()) {
-				case Keyboard.KEY_RETURN:
-					state = GAME;
-					mPlayer.playTrack(GAME);
-					break;
-				default:
-					break;
-				}
+			if(Keyboard.next() && Keyboard.getEventKeyState()) {
+				state = GAME;
+				mPlayer.playTrack(GAME);
 			}
 			break;
 		case GAME:

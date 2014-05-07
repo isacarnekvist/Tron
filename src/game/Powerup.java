@@ -35,16 +35,16 @@ public class Powerup {
 		type = types[r.nextInt(2)];
 		switch (type) {
 		case "Speed":
-			sprite = new Sprite("res/powerup_speed.png", 52, 52);
+			sprite = new Sprite("res/powerup_speed.png", 64, 64);
 			break;
 		case "Longer":
-			sprite = new Sprite("res/powerup_length.png", 52, 52);
+			sprite = new Sprite("res/powerup_length.png", 64, 64);
 			break;
 		case "Slow":
-			sprite = new Sprite("res/powerup_speed.png", 52, 52);
+			sprite = new Sprite("res/powerup_speed.png", 64, 64);
 			break;
 		case "Shorter":
-			sprite = new Sprite("res/powerup_speed.png", 52, 52);
+			sprite = new Sprite("res/powerup_speed.png", 64, 64);
 			break;
 		default:
 			break;
