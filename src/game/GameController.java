@@ -15,6 +15,7 @@ public class GameController {
 	private Sprite logo;
 	private Sprite info_enter;
 	private Sprite key_a, key_d, key_left, key_right;
+	private Sprite end_winner, end_loser;
 	private int width, height;				// Screen pixels height and width
 	private ArrayList<SimpleMatrix> screenBounds;
 	private Random r;
@@ -49,7 +50,9 @@ public class GameController {
 		key_d = new Sprite("res/key_d.png", 64, 40);
 		key_left = new Sprite("res/key_left.png", 64, 40);
 		key_right = new Sprite("res/key_right.png", 64, 40);
-
+		end_winner = new Sprite("res/end_winner.png", 256, 56);
+		end_loser = new Sprite("res/end_loser.png", 256, 56);
+		
 		// Add Screenbounds
 		screenBounds = new ArrayList<SimpleMatrix>();
 		screenBounds.add(new SimpleMatrix(1, 2, true, 0, 0));
@@ -72,11 +75,13 @@ public class GameController {
 		key_a.draw((int)player1.getRotatingPoint().get(0) - 67, (int)player1.getRotatingPoint().get(1) - 60);
 		player1.render(0);
 		key_d.draw((int)player1.getRotatingPoint().get(0) + 63, (int)player1.getRotatingPoint().get(1) - 60);
+		end_winner.draw(player1.getCenter());
 
 		// Player 2
 		key_left.draw((int)player2.getRotatingPoint().get(0) - 67, (int)player2.getRotatingPoint().get(1) - 60);
 		player2.render(0);
 		key_right.draw((int)player2.getRotatingPoint().get(0) + 64, (int)player2.getRotatingPoint().get(1) - 60);
+		end_loser.draw(player2.getCenter());
 	}
 	
 	/**
