@@ -110,6 +110,14 @@ public class Sprite {
 		glEnd();
 	}
 	
+	/**
+	 * Another way to draw
+	 * @param pos Vertex with x and y coordinates
+	 */
+	public void draw(SimpleMatrix pos) {
+		draw(pos.get(X), pos.get(Y));
+	}
+	
 	public int getWidth() {
 		return imgWidth;
 	}
