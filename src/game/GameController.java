@@ -53,7 +53,7 @@ public class GameController {
 
 		// Load sprites
 		logo = new Sprite("res/logo.png", 1024, 234);
-		info_enter = new Sprite("res/info_enter.png", 1024, 40);
+		info_enter = new Sprite("res/info_enter.png", 1024, 60);
 		key_a = new Sprite("res/key_a.png", 64, 40);
 		key_d = new Sprite("res/key_d.png", 64, 40);
 		key_left = new Sprite("res/key_left.png", 64, 40);
