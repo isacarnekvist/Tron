@@ -22,7 +22,7 @@ public class GameController {
 	private Sprite logo;
 	private Sprite info_enter;
 	private Sprite key_a, key_d, key_left, key_right;
-	private Sprite end_winner, end_loser;
+	private Sprite end_winner, end_loser, end_tie;
 	
 	// Constants
 	private final int LEFT 		= -1;
@@ -36,6 +36,7 @@ public class GameController {
 	private final int NOGAMEPLAYED = 0;
 	private final int PLAYER1 = 1;
 	private final int PLAYER2 = 2;
+	private final int NOSURVIVOR = 3;
 	private int state;
 
 	public GameController(int maxX, int maxY) {
@@ -60,6 +61,7 @@ public class GameController {
 		key_right = new Sprite("res/key_right.png", 64, 40);
 		end_winner = new Sprite("res/end_winner.png", 256, 56);
 		end_loser = new Sprite("res/end_loser.png", 256, 56);
+		end_tie = new Sprite("res/end_tie.png", 256, 256);
 		
 		// Add Screenbounds
 		screenBounds = new ArrayList<SimpleMatrix>();
@@ -102,6 +104,9 @@ public class GameController {
 			end_winner.draw(player2.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 100)));
 			end_loser.draw(player1.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 100)));
 			break;
+		case NOSURVIVOR:
+			end_tie.draw(width/2, height/2 + 350);
+			break;
 		}
 	}
 	
@@ -125,7 +130,7 @@ public class GameController {
 			p.render();
 		}
 		
-		//player1.render(delta);
+		player1.render(delta);
 		//player1.turn(RIGHT);
 		player2.render(delta);
 		//player2.turn(RIGHT);
@@ -170,8 +175,8 @@ public class GameController {
 	private void checkForBikeCollisions() {
 		boolean P2DidHitP1 = player1.isCollision(player2.getCenter(), 60, player2.getBoundingCoordinates());
 		boolean P1DidHitP2 = player2.isCollision(player1.getCenter(), 60, player1.getBoundingCoordinates());
-		boolean P1Suicide = player1.checkOwnTail();
-		boolean P2Suicide = player2.checkOwnTail();		
+		boolean P1Suicide = player1.checkIfTailCollision(player1.getCenter(), 60, player1.getBoundingCoordinates());
+		boolean P2Suicide = player2.checkIfTailCollision(player2.getCenter(), 60, player2.getBoundingCoordinates());		
 		boolean P1DidHitWall = player1.isCollision(null, width*2, screenBounds);
 		boolean P2DidHitWall = player2.isCollision(null, width*2, screenBounds);
 		// Decide what to do
@@ -187,6 +192,7 @@ public class GameController {
 			System.out.println("P1 won.");
 		} else if (P1DidHitP2 && P2DidHitP1) {
 			System.out.println("You're both dead.");
+			winner = NOSURVIVOR;
 			reset();
 		} else if (P1DidHitWall) {
 			System.out.println("Player 1 is dead.");
