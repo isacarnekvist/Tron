@@ -3,11 +3,11 @@ import static org.junit.Assert.*;
 
 import org.junit.After;
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 import game.Bike;
 
-import org.ejml.simple.SimpleMatrix;
+//import org.ejml.simple.SimpleMatrix;
 import org.junit.Before;
 import org.junit.Test;
 import org.lwjgl.opengl.Display;
@@ -56,6 +56,6 @@ public class BikeTest {
 	
 	@Test
 	public void testBoundingCoordinates() {
-		ArrayList<SimpleMatrix> list = bike1.getBoundingCoordinates();
+		//ArrayList<SimpleMatrix> list = bike1.getBoundingCoordinates();
 	}
 }

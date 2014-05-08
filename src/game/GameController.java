@@ -14,6 +14,7 @@ public class GameController {
 	private int width, height;				// Screen pixels height and width
 	private ArrayList<SimpleMatrix> screenBounds;
 	private ArrayList<Powerup> powerups;
+	private long futureTimeMark;			// Used for knowing when to switch from end to start screen
 	
 	// Sprites
 	private Sprite logo;
@@ -28,7 +29,7 @@ public class GameController {
 
 	private final int START = -1;
 	private final int GAME 	= 0;
-	//private final int END 	= 1;
+	private final int END 	= 1;
 	
 	private final int NOGAMEPLAYED = 0;
 	private final int PLAYER1 = 1;
@@ -43,7 +44,7 @@ public class GameController {
 		height = maxY;
 		grid = new Grid(maxX, maxY);
 		mPlayer = new MusicPlayer();
-		mPlayer.playTrack(START);
+		mPlayer.playState(START);
 		player1 = new Bike(1, maxX/2 - 508, maxY/2 + 280);
 		player2 = new Bike(2, maxX/2 + 514, maxY/2 + 280);
 		powerups = new ArrayList<Powerup>();
@@ -68,6 +69,28 @@ public class GameController {
 		state = START;
 	}
 	
+
+	/**
+	 * Render current state to screen.
+	 * @param delta Time since last render in ms.
+	 */
+	public void render(int delta) {
+		checkForEvents();
+		switch (state) {
+		case START:
+			renderStartScreen(delta);
+			break;
+		case GAME:
+			renderGameScreen(delta);
+			break;
+		case END:
+			renderEndScreen(delta);
+			break;
+		default:
+			break;
+		}		
+	}
+
 
 	/**
 	 * Render the start screen
@@ -116,7 +139,7 @@ public class GameController {
 		
 		while (powerups.size() == 0) {
 			Powerup p = new Powerup(width, height);
-			if(!player1.isCollision(p.getPos(), p.getRadius(), p.getBoundingCoordinates()) &&
+			if(!player1.isCollision(p.getPos(), 200, p.getBoundingCoordinates()) &&
 					!player2.isCollision(p.getPos(), p.getRadius(), p.getBoundingCoordinates())) {
 				powerups.add(p);
 			}
@@ -127,9 +150,7 @@ public class GameController {
 		}
 		
 		player1.render(delta);
-		//player1.turn(RIGHT);
 		player2.render(delta);
-		//player2.turn(RIGHT);
 
 		checkForBikeCollisions();
 		checkforPowerupCollisions(player1);
@@ -137,34 +158,34 @@ public class GameController {
 	}
 	
 	/**
+	 * 
+	 * @param delta
+	 */
+	public void renderEndScreen(int delta) {
+		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos());
+		player1.render(0);
+		player2.render(0);
+		
+		if(System.nanoTime() > futureTimeMark) {
+			reset();
+		}
+	}
+
+
+	/**
 	 * Reset to start screen
 	 */
 	private void reset() {
 		player1 = new Bike(1, width/2 - 508, height/2 + 280);
 		player2 = new Bike(2, width/2 + 514, height/2 + 280);
 		state = START;
-		mPlayer.playTrack(START);
+		while(Keyboard.next()) {
+			// Empties keyboard cue
+		}
+		mPlayer.playState(START);
 		powerups.clear();
 	}
 
-	/**
-	 * Render current state to screen.
-	 * @param delta Time since last render in ms.
-	 */
-	public void render(int delta) {
-		checkForEvents();
-		switch (state) {
-		case START:
-			renderStartScreen(delta);
-			break;
-		case GAME:
-			renderGameScreen(delta);
-			break;
-		default:
-			break;
-		}		
-	}
-	
 	/**
 	 * Check for collisions with all objects
 	 */
@@ -179,32 +200,33 @@ public class GameController {
 		if (P1DidHitP2 && !P2DidHitP1) {
 			// P1 hit P2:s tail
 			winner = PLAYER2;
-			reset();
-			System.out.println("P2 won.");
+			prepareEndScreen();
 		} else if (P2DidHitP1 && !P1DidHitP2) {
 			// P2 hit P1:s tail
 			winner = PLAYER1;
-			reset();
-			System.out.println("P1 won.");
+			prepareEndScreen();
 		} else if (P1DidHitP2 && P2DidHitP1) {
-			System.out.println("You're both dead.");
 			winner = NOSURVIVOR;
-			reset();
+			prepareEndScreen();
 		} else if (P1DidHitWall) {
-			System.out.println("Player 1 is dead.");
 			winner = PLAYER2;
-			reset();
+			prepareEndScreen();
 		} else if (P2DidHitWall) {
-			System.out.println("Player 2 is dead.");
 			winner = PLAYER1;
-			reset();
+			prepareEndScreen();
 		} else if (P1Suicide) {
 			winner = PLAYER2;
-			reset();
+			prepareEndScreen();
 		} else if (P2Suicide) {
 			winner = PLAYER1;
-			reset();
+			prepareEndScreen();
 		}
+	}
+	
+	private void prepareEndScreen() {
+		mPlayer.playState(END);
+		state = END;
+		futureTimeMark = System.nanoTime() + 2*(long)1E9;
 	}
 
 	private void checkforPowerupCollisions(Bike player) {
@@ -229,7 +251,7 @@ public class GameController {
 		case START:
 			if(Keyboard.next() && Keyboard.getEventKeyState()) {
 				state = GAME;
-				mPlayer.playTrack(GAME);
+				mPlayer.playState(GAME);
 			}
 			break;
 		case GAME:

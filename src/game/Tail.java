@@ -60,7 +60,6 @@ public class Tail {
 			checker = new SimpleMatrix(1, 2, true, tail.get(i).get(0), tail.get(i).get(1));
 			if (checker.minus(otherPos).normF() < radius + 160) { // Approximate checking
 				// Now, precise checking
-				System.out.println("Proximity");
 				for(int j = 10; j < tail.size() - 3; j += 3) {
 					for(int z = 0; z < shape.size(); z++) {
 						if(Geometry.linesIntersect(tail.get(j - 3), tail.get(j + 3),

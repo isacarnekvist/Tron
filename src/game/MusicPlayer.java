@@ -8,15 +8,20 @@ public class MusicPlayer {
 	
 	private Audio start;
 	private Audio game;
+	private Audio crash;
+	private Audio slow;
 	private final int START = -1;
 	private final int GAME = 0;
+	private final int END = 1;
 	
 	public MusicPlayer() {
-		start = loadFile("res/Overture.ogg");
-		game = loadFile("res/Derezzed.ogg");
+		start = loadFile("OGG", "res/Overture.ogg");
+		game = loadFile("OGG", "res/Derezzed.ogg");
+		crash = loadFile("AIF", "res/crash.aiff");
+		slow = loadFile("WAV", "res/slowdown.wav");
 	}
 	
-	public void playTrack(int state) {
+	public void playState(int state) {
 		switch (state) {
 		case START:
 			start.playAsMusic(1f, 1f, true);
@@ -26,16 +31,15 @@ public class MusicPlayer {
 			game.playAsMusic(1f, 1f, true);
 			game.setPosition(0.5f);
 			break;
+		case END:
+			slow.playAsSoundEffect(1f, 1f, false);
+			crash.playAsMusic(1f, 1f, true);
 		}
 	}
 	
-	public void playSoundFX() {
-		
-	}
-	
-	private Audio loadFile(String filename) {
+	private Audio loadFile(String type, String filename) {
 		try {
-			return AudioLoader.getAudio("OGG", ResourceLoader.getResourceAsStream(filename));
+			return AudioLoader.getAudio(type, ResourceLoader.getResourceAsStream(filename));
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
