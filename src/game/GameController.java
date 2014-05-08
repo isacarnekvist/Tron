@@ -56,9 +56,9 @@ public class GameController {
 		key_d = new Sprite("res/key_d.png", 64, 40);
 		key_left = new Sprite("res/key_left.png", 64, 40);
 		key_right = new Sprite("res/key_right.png", 64, 40);
-		end_winner = new Sprite("res/end_winner.png", 256, 56);
-		end_loser = new Sprite("res/end_loser.png", 256, 56);
-		end_tie = new Sprite("res/end_tie.png", 256, 256);
+		end_winner = new Sprite("res/end_winner.png", 512, 112);
+		end_loser = new Sprite("res/end_loser.png", 512, 112);
+		end_tie = new Sprite("res/end_tie.png", 512, 512);
 		
 		// Add Screenbounds
 		screenBounds = new ArrayList<SimpleMatrix>();
@@ -115,16 +115,16 @@ public class GameController {
 			
 			break;
 		case PLAYER1:
-			end_winner.draw(player1.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 100)));
-			end_loser.draw(player2.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 100)));
+			end_winner.draw(player1.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 200)));
+			end_loser.draw(player2.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 200)));
 			break;
 			
 		case PLAYER2:
-			end_winner.draw(player2.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 100)));
-			end_loser.draw(player1.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 100)));
+			end_winner.draw(player2.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 200)));
+			end_loser.draw(player1.getCenter().plus(new SimpleMatrix(1, 2, true, 0, 200)));
 			break;
 		case NOSURVIVOR:
-			end_tie.draw(width/2, height/2 + 350);
+			end_tie.draw(width/2, height/2 + 450);
 			break;
 		}
 	}
@@ -137,7 +137,7 @@ public class GameController {
 		
 		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos()); 
 		
-		while (powerups.size() == 0) {
+		while (powerups.size() <= 2) {
 			Powerup p = new Powerup(width, height);
 			if(!player1.isCollision(p.getPos(), 200, p.getBoundingCoordinates()) &&
 					!player2.isCollision(p.getPos(), p.getRadius(), p.getBoundingCoordinates())) {

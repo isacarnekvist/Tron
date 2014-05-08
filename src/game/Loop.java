@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class Loop {
 	
 	private static int fps = 60;
-	private final int screenPixelHeight = 1400;
+	private final int screenPixelHeight = 2000;
 	private double aspectRatio;
 	private GameController gc;
 	
