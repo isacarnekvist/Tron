@@ -155,6 +155,9 @@ public class Bike {
 		}
 	}
 
+	/**
+	 * @param p The power up to apply to this bike
+	 */
 	public void powerup(Powerup p) {
 		switch (p.getType()) {
 		case "Speed":
@@ -176,7 +179,13 @@ public class Bike {
 		}
 	}
 	
-	public boolean checkOwnTail() {
-		return tail.isCollision(getCenter(), 60, getBoundingCoordinates());
+	/**
+	 * @param otherPos Center coordinates of object to check against.
+	 * @param radius Approximate radius of circle around object to check against.
+	 * @param other List of coordinates around the object to check against.
+	 * @return
+	 */
+	public boolean checkIfTailCollision(SimpleMatrix otherPos, double radius, ArrayList<SimpleMatrix> other) {
+		return tail.isCollision(otherPos, 100, other);
 	}
 }

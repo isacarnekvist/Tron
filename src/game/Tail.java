@@ -56,7 +56,7 @@ public class Tail {
 			return false;
 		}
 		
-		for (int i = 60; i < tail.size(); i += 10) {
+		for (int i = 40; i < tail.size(); i += 10) {
 			checker = new SimpleMatrix(1, 2, true, tail.get(i).get(0), tail.get(i).get(1));
 			if (checker.minus(otherPos).normF() < radius + 160) { // Approximate checking
 				// Now, precise checking
