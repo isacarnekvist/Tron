@@ -4,8 +4,6 @@ import org.ejml.simple.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
-import java.util.Stack;
 
 public class GameController {
 	
@@ -15,7 +13,6 @@ public class GameController {
 	private int winner;						// Who won the last game?
 	private int width, height;				// Screen pixels height and width
 	private ArrayList<SimpleMatrix> screenBounds;
-	private Random r;
 	private ArrayList<Powerup> powerups;
 	
 	// Sprites
@@ -49,7 +46,6 @@ public class GameController {
 		mPlayer.playTrack(START);
 		player1 = new Bike(1, maxX/2 - 508, maxY/2 + 280);
 		player2 = new Bike(2, maxX/2 + 514, maxY/2 + 280);
-		r = new Random();
 		powerups = new ArrayList<Powerup>();
 
 		// Load sprites
