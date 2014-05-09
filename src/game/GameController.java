@@ -2,8 +2,12 @@ package game;
 import org.lwjgl.input.Keyboard;
 import org.ejml.simple.*;
 
+import ann.Network;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Stack;
 
 public class GameController {
 	
@@ -16,6 +20,12 @@ public class GameController {
 	private ArrayList<Powerup> powerups;
 	private long futureTimeMark;			// Used for knowing when to switch from end to start screen
 	
+	// AI
+	private Stack<Network> anns;		// Artificial neural networks
+	private Stack<Network> winners; 	// Which networks won?
+	private Network player1AI;
+	private Network player2AI;
+	
 	// Sprites
 	private Sprite logo;
 	private Sprite info_enter;
@@ -23,6 +33,8 @@ public class GameController {
 	private Sprite end_winner, end_loser, end_tie;
 	
 	// Constants
+	private final boolean AI_TRAINING = false;
+	
 	private final int LEFT 		= -1;
 	private final int STRAIGHT 	= 0;
 	private final int RIGHT 	= 1;
@@ -30,6 +42,7 @@ public class GameController {
 	private final int START = -1;
 	private final int GAME 	= 0;
 	private final int END 	= 1;
+	private final int AI_STATE = 2;
 	
 	private final int NOGAMEPLAYED = 0;
 	private final int PLAYER1 = 1;
@@ -67,6 +80,16 @@ public class GameController {
 		screenBounds.add(new SimpleMatrix(1, 2, true, width, height));
 		screenBounds.add(new SimpleMatrix(1, 2, true, width, 0));
 		state = START;
+		
+		// AI
+		anns = new Stack<Network>();
+		for (int i = 0; i < 8; i++) {
+			anns.push(new Network(12, 2, 6, 1));
+		}
+		winners = new Stack<Network>();
+		if(AI_TRAINING) {
+			state = AI_STATE;
+		}
 	}
 	
 
@@ -86,6 +109,9 @@ public class GameController {
 		case END:
 			renderEndScreen(delta);
 			break;
+		case AI_STATE:
+			renderAIScreen(delta);
+			break;
 		default:
 			break;
 		}		
@@ -102,12 +128,12 @@ public class GameController {
 		
 		// Player 1
 		key_a.draw((int)player1.getRotatingPoint().get(0) - 67, (int)player1.getRotatingPoint().get(1) - 60);
-		player1.render(0);
+		player1.render();
 		key_d.draw((int)player1.getRotatingPoint().get(0) + 63, (int)player1.getRotatingPoint().get(1) - 60);
 
 		// Player 2
 		key_left.draw((int)player2.getRotatingPoint().get(0) - 67, (int)player2.getRotatingPoint().get(1) - 60);
-		player2.render(0);
+		player2.render();
 		key_right.draw((int)player2.getRotatingPoint().get(0) + 64, (int)player2.getRotatingPoint().get(1) - 60);
 		
 		switch (winner) {
@@ -149,8 +175,10 @@ public class GameController {
 			p.render();
 		}
 		
-		player1.render(delta);
-		player2.render(delta);
+		player1.calculate(delta);
+		player2.calculate(delta);
+		player1.render();
+		player2.render();
 
 		checkForBikeCollisions();
 		checkforPowerupCollisions(player1);
@@ -163,12 +191,23 @@ public class GameController {
 	 */
 	public void renderEndScreen(int delta) {
 		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos());
-		player1.render(0);
-		player2.render(0);
+		player1.render();
+		player2.render();
 		
 		if(System.nanoTime() > futureTimeMark) {
 			reset();
 		}
+	}
+	
+	public void renderAIScreen(int delta) {
+		// Gather info for ANN:s
+		
+		// Give info to ANN:s
+		
+		// Ask them what to do
+		
+		// Render as usual
+		renderGameScreen(delta);
 	}
 
 
@@ -225,7 +264,12 @@ public class GameController {
 	
 	private void prepareEndScreen() {
 		mPlayer.playState(END);
-		state = END;
+		if(AI_TRAINING) {
+			reset();
+			state = AI_STATE;
+		} else {
+			state = END;
+		}
 		futureTimeMark = System.nanoTime() + 2*(long)1E9;
 	}
 
