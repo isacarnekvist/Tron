@@ -3,7 +3,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.openal.AL;
 import org.lwjgl.opengl.Display;
-//import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.DisplayMode;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -24,7 +24,7 @@ public class Loop {
 			
 			gc.render(1000/fps);
 			
-			Display.sync(fps);
+			Display.sync(fps*2);
 			Display.update();		
 		}
 		Display.destroy();
@@ -46,7 +46,7 @@ public class Loop {
 			System.exit(0);
 		}
 		
-		Mouse.setGrabbed(true);
+		//Mouse.setGrabbed(true);
 		aspectRatio = (double)Display.getHeight()/Display.getWidth();
 		
 		// OpenGL setup

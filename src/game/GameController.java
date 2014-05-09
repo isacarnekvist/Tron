@@ -4,10 +4,12 @@ import org.ejml.simple.*;
 
 import ann.Network;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Random;
 import java.util.Stack;
+import java.util.TreeSet;
 
 public class GameController {
 	
@@ -21,8 +23,8 @@ public class GameController {
 	private long futureTimeMark;			// Used for knowing when to switch from end to start screen
 	
 	// AI
-	private Stack<Network> anns;		// Artificial neural networks
-	private Stack<Network> winners; 	// Which networks won?
+	private LinkedList<Network> anns;		// Artificial neural networks
+	private LinkedList<Network> winners; 	// Which networks won?
 	private Network player1AI;
 	private Network player2AI;
 	
@@ -33,7 +35,7 @@ public class GameController {
 	private Sprite end_winner, end_loser, end_tie;
 	
 	// Constants
-	private final boolean AI_TRAINING = false;
+	private final boolean AI_TRAINING = true;
 	
 	private final int LEFT 		= -1;
 	private final int STRAIGHT 	= 0;
@@ -82,14 +84,18 @@ public class GameController {
 		state = START;
 		
 		// AI
-		anns = new Stack<Network>();
+		anns = new LinkedList<Network>();
 		for (int i = 0; i < 8; i++) {
-			anns.push(new Network(12, 2, 6, 1));
+			Network n = new Network(24, 2, 15, 1);
+			n.randomizeWeights();
+			anns.addLast(n);
 		}
-		winners = new Stack<Network>();
+		winners = new LinkedList<Network>();
 		if(AI_TRAINING) {
 			state = AI_STATE;
 		}
+		player1AI = anns.getFirst();
+		player2AI = anns.getFirst();
 	}
 	
 
@@ -163,7 +169,7 @@ public class GameController {
 		
 		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos()); 
 		
-		while (powerups.size() <= 2) {
+		while (powerups.size() < 0) {
 			Powerup p = new Powerup(width, height);
 			if(!player1.isCollision(p.getPos(), 200, p.getBoundingCoordinates()) &&
 					!player2.isCollision(p.getPos(), p.getRadius(), p.getBoundingCoordinates())) {
@@ -201,13 +207,105 @@ public class GameController {
 	
 	public void renderAIScreen(int delta) {
 		// Gather info for ANN:s
+		Double[] args1 = getAIArgs(player1, player2);
+		Double[] args2 = getAIArgs(player2, player1);
 		
 		// Give info to ANN:s
-		
 		// Ask them what to do
+		double[] ans1 = player1AI.evaluate(args1);
+		double[] ans2 = player2AI.evaluate(args2);
+		
+		if(Math.abs(ans1[0]) < 0.1) {
+			player1.turn(STRAIGHT);
+		} else {
+			player1.turn((int)Math.signum(ans1[0]));
+		}
+		
+		if(Math.abs(ans2[0]) < 0.1) {
+			player2.turn(STRAIGHT);
+		} else {
+			player2.turn((int)Math.signum(ans2[0]));
+		}
 		
 		// Render as usual
 		renderGameScreen(delta);
+	}
+	
+	private void handleANNsOnGameOver() {
+		switch (winner) {
+		case PLAYER1:
+			winners.addLast(player1AI);
+			break;
+		case PLAYER2:
+			winners.addLast(player2AI);
+			break;
+		case NOSURVIVOR:
+			// Delete them?
+			break;
+		}
+		anns.remove(player1AI);
+		anns.remove(player2AI);
+		if(anns.size() < 2) { // Not enough ANNS left to continue
+			while(winners.size() > 1) {
+				Network n1 = winners.pollFirst();
+				Network n2 = winners.pollFirst();
+				anns.addLast(n1);
+				anns.addLast(n2);
+				anns.addLast(n1.mateWith(n2));
+				System.out.println("Three new babies");
+				while(anns.size() < 8 && winners.size() < 2) {
+					anns.addLast(n1.mateWith(n2));
+				}
+			}
+		}
+		Random rand = new Random(System.nanoTime());
+		while(anns.size() > 8) {
+			anns.remove(rand.nextInt(anns.size()));
+		}
+		player1AI = anns.remove(rand.nextInt(anns.size()));
+		player1AI.mutate(2);
+		player2AI = anns.pollFirst();
+	}
+	
+	/**
+	 * Fetch all arguments needed for the ANN
+	 * @param player
+	 * @param otherPlayer
+	 * @return
+	 */
+	private Double[] getAIArgs(Bike player, Bike otherPlayer){
+		double myAngle = player.getAngle();
+		double angle = Geometry.angle(player.getVelocity(), otherPlayer.getVelocity());
+		TreeSet<SimpleMatrix> closestToP = new TreeSet<SimpleMatrix>(new VectorComparator(player.getCenter()));
+		for (SimpleMatrix s : player.tailSamples()) {
+			closestToP.add(s);
+		}
+		for (SimpleMatrix s : otherPlayer.tailSamples()) {
+			closestToP.add(s);
+		}
+		// x   y   width - x   height - y   myAngle   angle   myVel   otherVel   closest8(x1, y1, x2, y2,...)) = 23 inputs
+		ArrayList<Double> args = new ArrayList<Double>();
+		args.add(player.getCenter().get(0));
+		args.add(player.getCenter().get(1));
+		args.add(width - player.getCenter().get(0));
+		args.add(height - player.getCenter().get(1));
+		args.add(myAngle);
+		args.add(angle);
+		args.add(player.getVelocity().normF());
+		args.add(otherPlayer.getVelocity().normF());
+		for (int i = 0; i < 8; i++) {
+			SimpleMatrix temp = closestToP.pollFirst();
+			if(temp != null) {
+				args.add(temp.get(0));
+				args.add(temp.get(1));
+			} else {
+				args.add(0d);
+				args.add(0d);
+			}
+		}
+		Double[] res = new Double[24];
+		args.toArray(res);
+		return res;
 	}
 
 
@@ -265,6 +363,7 @@ public class GameController {
 	private void prepareEndScreen() {
 		mPlayer.playState(END);
 		if(AI_TRAINING) {
+			handleANNsOnGameOver();
 			reset();
 			state = AI_STATE;
 		} else {

@@ -65,6 +65,13 @@ public class Bike {
 	}
 	
 	/**
+	 * @return The angle cw from x-axis
+	 */
+	public double getAngle() {
+		return angle;
+	}
+	
+	/**
 	 * Render this bike.
 	 */
 	public void render() {

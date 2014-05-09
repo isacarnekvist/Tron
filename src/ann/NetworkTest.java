@@ -9,7 +9,7 @@ import org.junit.Test;
 public class NetworkTest {
 	
 	private Network n1, n2, n3, n4, n5;
-	private double[] in1, in2, in3, in4;
+	private Double[] in1, in2, in3, in4;
 
 	@Before
 	public void setUp() throws Exception {
@@ -23,10 +23,10 @@ public class NetworkTest {
 		n3.randomizeWeights();
 		n4.randomizeWeights();
 		n5.randomizeWeights();
-		double[] i1 = {0.5};
-		double[] i2 = {0.2, 0.7};
-		double[] i3 = {0.2, 0.7, -0.4};
-		double[] i4 = {0.2, 0.7, -0.4, 0.6};
+		Double[] i1 = {0.5};
+		Double[] i2 = {0.2, 0.7};
+		Double[] i3 = {0.2, 0.7, -0.4};
+		Double[] i4 = {0.2, 0.7, -0.4, 0.6};
 		in1 = i1;
 		in2 = i2;
 		in3 = i3;

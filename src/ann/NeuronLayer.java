@@ -24,7 +24,7 @@ public class NeuronLayer {
 	 * @param signal The signal value as double
 	 * @param neuron The index of the neuron to send to
 	 */
-	protected void input(double signal, int neuron) {
+	protected void input(Double signal, int neuron) {
 		neurons[neuron].input(signal);
 	}
 	
@@ -32,7 +32,7 @@ public class NeuronLayer {
 	 * Input signals to all neurons in layer
 	 * @param signal An array of doubles with value to neuron i at index i.
 	 */
-	protected void input(double[] signal) {
+	protected void input(Double[] signal) {
 		for(int i = 0; i < signal.length; i++) {
 			neurons[i].input(signal[i]);
 		}

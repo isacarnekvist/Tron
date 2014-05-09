@@ -93,6 +93,21 @@ public class WeightsLayer {
 	}
 	
 	/**
+	 * Lets the weight get mutated
+	 * @param probability How many times of a hundred that a weight will be redefined.
+	 */
+	protected void mutate(int probability) {
+		Random rand = new Random(System.nanoTime());
+		for (int i = 0; i < getInputs(); i++) {
+			for (int j = 0; j < getOutputs(); j++) {
+				if(rand.nextInt(100) < probability) {
+					weights[i][j] = rand.nextFloat()*2 - 1;
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Inserts new values for weights
 	 * @param newWeights A 2-d array of doubles with new weights
 	 * @param fromInput

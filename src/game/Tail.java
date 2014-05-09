@@ -79,8 +79,8 @@ public class Tail {
 	 */
 	public ArrayList<SimpleMatrix> tailSamples() {
 		ArrayList<SimpleMatrix> res = new ArrayList<SimpleMatrix>();
-		for(int i = 150; i < tail.size(); i += 100) {
-			res.add(tail.get(i));
+		for(int i = 80; i < tail.size(); i += length/30) {
+			res.add(new SimpleMatrix(1, 2, true, tail.get(i).get(X), tail.get(i).get(Y)));
 		}
 		return res;
 	}

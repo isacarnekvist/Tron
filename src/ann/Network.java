@@ -82,7 +82,7 @@ public class Network {
 	 * @param signals An array of doubles containing value to neuron i at index i.
 	 * @return An array of doubles with output values from the network
 	 */
-	public double[] evaluate(double[] signals) {
+	public double[] evaluate(Double[] signals) {
 		inputLayer.input(signals);
 		process();
 		return outputLayer.getOutputs();
@@ -126,6 +126,16 @@ public class Network {
 		}
 		
 		return res;
+	}
+	
+	/**
+	 * Let the network mutate itself
+	 * @param probability How many in 100 that a weight will be changed.
+	 */
+	public void mutate(int probability) {
+		for(WeightsLayer w : weightLayer) {
+			
+		}
 	}
 	
 	/**
