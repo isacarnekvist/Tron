@@ -73,6 +73,17 @@ public class Tail {
 		
 		return false;
 	}
+	
+	/**
+	 * @return An array of spread out (i.e. not all) coordinates from the tail.
+	 */
+	public ArrayList<SimpleMatrix> tailSamples() {
+		ArrayList<SimpleMatrix> res = new ArrayList<SimpleMatrix>();
+		for(int i = 150; i < tail.size(); i += 100) {
+			res.add(tail.get(i));
+		}
+		return res;
+	}
 
 	public void setLength(int length) {
 		this.length = length;

@@ -186,6 +186,20 @@ public class Bike {
 	}
 	
 	/**
+	 * @return An array of spread out (i.e. not all) coordinates from the tail.
+	 */
+	public ArrayList<SimpleMatrix> tailSamples() {
+		return tail.tailSamples();
+	}
+	
+	/**
+	 * @return The current velocity vector.
+	 */
+	public SimpleMatrix getVelocity() {
+		return vel;
+	}
+	
+	/**
 	 * @param otherPos Center coordinates of object to check against.
 	 * @param radius Approximate radius of circle around object to check against.
 	 * @param other List of coordinates around the object to check against.
