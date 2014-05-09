@@ -65,23 +65,29 @@ public class Bike {
 	}
 	
 	/**
-	 * Render next this bike to next frame, also calculate change depending on delta value.
-	 * @param delta The time in ms since last frame >= 0
+	 * Render this bike.
 	 */
-	public void render(int delta) {
+	public void render() {
+		sprite.draw(pos.get(X), pos.get(Y));
+		tail.render();
+	}
+	
+	/**
+	 * Update everything before rendering
+	 * @param delta Time since last call in ms
+	 */
+	public void calculate(int delta) {
 		if (delta < 0) {
 			throw new IllegalArgumentException("delta should be > 0"); // Undefined behavior
 		}
 		double deltaAngle = turning*turningSpeed*delta/1000;
 		angle += deltaAngle;
 		tail.push(pos, angle);
-		tail.render();
 		if(turning != STRAIGHT) {
 			sprite.rotate(turning*turningSpeed*delta/1000);
 			rotateVelocity(turning*turningSpeed*delta/1000);
 		}
 		pos = pos.plus(vel.scale((double)delta/1000));
-		sprite.draw(pos.get(X), pos.get(Y));
 	}
 	
 	/**
