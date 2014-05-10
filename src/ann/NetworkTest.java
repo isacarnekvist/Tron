@@ -39,7 +39,8 @@ public class NetworkTest {
 	
 	@Test
 	public void testMix() {
-		n5 = n5.mateWith(n4);
+		n5 = n5.mateWithR(n4);
+		n4 = n4.mateWithR(n5);
 		assertTrue(abs(n5.evaluate(in4)) != 0);
 		assertTrue(n5.evaluate(in4).length == 3);
 	}

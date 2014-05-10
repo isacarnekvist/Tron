@@ -24,8 +24,10 @@ public class Loop {
 			
 			gc.render(1000/fps);
 			
-			Display.sync(fps*2);
-			Display.update();		
+			if(gc.getIteration() % 8 == 0) {
+				Display.sync(fps*2);
+				Display.update();	
+			}	
 		}
 		Display.destroy();
 		AL.destroy();
@@ -36,8 +38,8 @@ public class Loop {
 		// LWJGL Setup
 		try {
 			Display.setFullscreen(true);
-			//Display.setDisplayMode(new DisplayMode(1100, 700));
-			//Display.setLocation(0, 0);
+			Display.setDisplayMode(new DisplayMode(1100, 700));
+			Display.setLocation(0, 0);
 			Display.setTitle("TRON-SNAKE");
 			Display.setVSyncEnabled(true);
 			Display.create();

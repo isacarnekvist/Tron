@@ -41,7 +41,8 @@ public class WeightsLayerTest {
 		w5.insertWeights(s, fi, ti, fo, to);
 		w6.randomize();
 		w7.randomize();
-		WeightsLayer w8 = w6.mateWith(w7);
+		WeightsLayer w8 = w6.mateWithR(w7);
+		w7 = w8.mateWithS(w6, 20);
 	}
 	
 	@Test

@@ -194,9 +194,10 @@ public class Bike {
 	
 	/**
 	 * @return An array of spread out (i.e. not all) coordinates from the tail.
+	 * @param distance how many points in tail to skip in between every sample
 	 */
-	public ArrayList<SimpleMatrix> tailSamples() {
-		return tail.tailSamples();
+	public ArrayList<SimpleMatrix> tailSamples(int distance) {
+		return tail.tailSamples(distance);
 	}
 	
 	/**

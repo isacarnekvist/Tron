@@ -22,18 +22,13 @@ public class GameController {
 	private ArrayList<Powerup> powerups;
 	private long futureTimeMark;			// Used for knowing when to switch from end to start screen
 	
-	// AI
-	private LinkedList<Network> anns;		// Artificial neural networks
-	private LinkedList<Network> winners; 	// Which networks won?
-	private Network player1AI;
-	private Network player2AI;
-	
 	// Sprites
 	private Sprite logo;
 	private Sprite info_enter;
 	private Sprite key_a, key_d, key_left, key_right;
 	private Sprite end_winner, end_loser, end_tie;
 	
+	private AIHandler aiHandler;
 	// Constants
 	private final boolean AI_TRAINING = true;
 	
@@ -81,21 +76,13 @@ public class GameController {
 		screenBounds.add(new SimpleMatrix(1, 2, true, 0, height));
 		screenBounds.add(new SimpleMatrix(1, 2, true, width, height));
 		screenBounds.add(new SimpleMatrix(1, 2, true, width, 0));
-		state = START;
 		
-		// AI
-		anns = new LinkedList<Network>();
-		for (int i = 0; i < 8; i++) {
-			Network n = new Network(24, 2, 15, 1);
-			n.randomizeWeights();
-			anns.addLast(n);
-		}
-		winners = new LinkedList<Network>();
+		aiHandler = new AIHandler(30);
 		if(AI_TRAINING) {
 			state = AI_STATE;
+		} else {
+			state = START;
 		}
-		player1AI = anns.getFirst();
-		player2AI = anns.getFirst();
 	}
 	
 
@@ -183,8 +170,11 @@ public class GameController {
 		
 		player1.calculate(delta);
 		player2.calculate(delta);
-		player1.render();
-		player2.render();
+		
+		if(aiHandler.getIteration() % 8 == 0) {
+			player1.render();
+			player2.render();
+		}
 
 		checkForBikeCollisions();
 		checkforPowerupCollisions(player1);
@@ -212,59 +202,32 @@ public class GameController {
 		
 		// Give info to ANN:s
 		// Ask them what to do
-		double[] ans1 = player1AI.evaluate(args1);
-		double[] ans2 = player2AI.evaluate(args2);
-		
-		if(Math.abs(ans1[0]) < 0.1) {
-			player1.turn(STRAIGHT);
-		} else {
-			player1.turn((int)Math.signum(ans1[0]));
-		}
-		
-		if(Math.abs(ans2[0]) < 0.1) {
-			player2.turn(STRAIGHT);
-		} else {
-			player2.turn((int)Math.signum(ans2[0]));
-		}
+		player1.turn(aiHandler.getPlayer1Decision(args1));
+		player2.turn(aiHandler.getPlayer2Decision(args2));
 		
 		// Render as usual
 		renderGameScreen(delta);
 	}
 	
+	/**
+	 * Used for skipping rendering some games in AI-mode
+	 * @return the current iteration
+	 */
+	public long getIteration() {
+		return aiHandler.getIteration();
+	}
+	
 	private void handleANNsOnGameOver() {
-		switch (winner) {
-		case PLAYER1:
-			winners.addLast(player1AI);
-			break;
-		case PLAYER2:
-			winners.addLast(player2AI);
-			break;
-		case NOSURVIVOR:
-			// Delete them?
-			break;
+		if(player1.getCenter().get(1) < 100 && player1.getCenter().get(1) < 100) {
+			// Both suck, delete both
+			aiHandler.setWinner(0);
+		} else if (winner == PLAYER1) {
+			aiHandler.setWinner(1);
+		} else if (winner == PLAYER2) {
+			aiHandler.setWinner(2);
+		} else if (winner == NOSURVIVOR) {
+			aiHandler.setWinner(0);
 		}
-		anns.remove(player1AI);
-		anns.remove(player2AI);
-		if(anns.size() < 2) { // Not enough ANNS left to continue
-			while(winners.size() > 1) {
-				Network n1 = winners.pollFirst();
-				Network n2 = winners.pollFirst();
-				anns.addLast(n1);
-				anns.addLast(n2);
-				anns.addLast(n1.mateWith(n2));
-				System.out.println("Three new babies");
-				while(anns.size() < 8 && winners.size() < 2) {
-					anns.addLast(n1.mateWith(n2));
-				}
-			}
-		}
-		Random rand = new Random(System.nanoTime());
-		while(anns.size() > 8) {
-			anns.remove(rand.nextInt(anns.size()));
-		}
-		player1AI = anns.remove(rand.nextInt(anns.size()));
-		player1AI.mutate(2);
-		player2AI = anns.pollFirst();
 	}
 	
 	/**
@@ -274,37 +237,74 @@ public class GameController {
 	 * @return
 	 */
 	private Double[] getAIArgs(Bike player, Bike otherPlayer){
-		double myAngle = player.getAngle();
-		double angle = Geometry.angle(player.getVelocity(), otherPlayer.getVelocity());
-		TreeSet<SimpleMatrix> closestToP = new TreeSet<SimpleMatrix>(new VectorComparator(player.getCenter()));
-		for (SimpleMatrix s : player.tailSamples()) {
-			closestToP.add(s);
-		}
-		for (SimpleMatrix s : otherPlayer.tailSamples()) {
-			closestToP.add(s);
-		}
-		// x   y   width - x   height - y   myAngle   angle   myVel   otherVel   closest8(x1, y1, x2, y2,...)) = 23 inputs
-		ArrayList<Double> args = new ArrayList<Double>();
-		args.add(player.getCenter().get(0));
-		args.add(player.getCenter().get(1));
-		args.add(width - player.getCenter().get(0));
-		args.add(height - player.getCenter().get(1));
-		args.add(myAngle);
-		args.add(angle);
-		args.add(player.getVelocity().normF());
-		args.add(otherPlayer.getVelocity().normF());
-		for (int i = 0; i < 8; i++) {
-			SimpleMatrix temp = closestToP.pollFirst();
-			if(temp != null) {
-				args.add(temp.get(0));
-				args.add(temp.get(1));
-			} else {
-				args.add(0d);
-				args.add(0d);
+		// These are returned:
+		// Angle [-pi/2, pi/2] and distance to:
+		//    opponent
+		//    14 closest obstacles
+		//				
+		// --------------------------
+		//  = 30 arguments
+		// 			   
+		Double[] res = new Double[30];
+		res[0] = Geometry.angle(player.getVelocity(),                              // angle to opponent
+				otherPlayer.getCenter().minus(player.getCenter()));
+		res[1] = otherPlayer.getCenter().minus(player.getCenter()).normF()/width;  // distance to opponent
+		
+		VectorComparator vc = new VectorComparator(player.getCenter());
+		TreeSet<SimpleMatrix> obstacles = new TreeSet<>(vc);
+		
+		// Add coordinates to portions of my tail that is in front of me
+		for(SimpleMatrix v : player.tailSamples(25)) {
+			double angle = Geometry.angle(player.getVelocity(),
+					otherPlayer.getCenter().minus(player.getCenter()));
+			if(Math.abs(angle) < Math.PI/2) { // Obstacles are in my sight
+				obstacles.add(v); // This vector is relative to the grid
 			}
 		}
-		Double[] res = new Double[24];
-		args.toArray(res);
+		
+		// Add coordinates to portions of opponents tail that is in front of me
+		for(SimpleMatrix v : otherPlayer.tailSamples(25)) {
+			double angle = Geometry.angle(player.getVelocity(),
+					otherPlayer.getCenter().minus(player.getCenter()));
+			if(angle < Math.PI/2) { // Obstacles are in my sight
+				obstacles.add(v); // This vector is relative to the grid
+			}
+		}
+		
+		// Add bottom and top wall coordinates
+		for(int x = (int)player.getCenter().get(0) - 300;
+				x < player.getCenter().get(0) + 300;
+				x += 20) {
+			SimpleMatrix up = new SimpleMatrix(1, 2, true, x, 0);
+			SimpleMatrix down = new SimpleMatrix(1, 2, true, x, height);
+			if(Geometry.angle(player.getVelocity(), up.minus(player.getVelocity())) < Math.PI/2) {
+				obstacles.add(up);
+			} else {
+				obstacles.add(down);
+			}
+		}
+		
+		// Add left and right wall coordinates
+		for(int y = (int)player.getCenter().get(1) - 350;
+				y < player.getCenter().get(1) + 350;
+				y += 20) {
+			SimpleMatrix right = new SimpleMatrix(1, 2, true, width, y);
+			SimpleMatrix left = new SimpleMatrix(1, 2, true, 0, y);
+			if(Geometry.angle(player.getVelocity(), right.minus(player.getVelocity())) < Math.PI/2) {
+				obstacles.add(right);
+			} else {
+				obstacles.add(left);
+			}
+		}
+		
+		// Now add the closest obstacles
+		for (int i = 0; i < 14; i++) {
+			SimpleMatrix v = obstacles.pollFirst();
+			// Angle relative the right hand side orth. vector
+			res[2 + 2*i] = Geometry.angle(player.getVelocity().mult(new SimpleMatrix(2, 2, true, 0, -1, 1, 0)),
+					v.minus(player.getCenter()));
+			res[3 + 2*i] = v.minus(player.getCenter()).normF();
+		}
 		return res;
 	}
 

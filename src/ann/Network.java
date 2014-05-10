@@ -107,12 +107,13 @@ public class Network {
 	}
 	
 	/**
-	 * Creates a new network with a mix between this and the argument sent. This is partially randomized
-	 * so that several different 'kids' can be obtained through repeated calls.
+	 * Per weight randomized mating.
+	 * Creates a new network with a mix between this and the argument sent. The return is a totally randomized
+	 * mix so that several different 'kids' can be obtained through repeated calls.
 	 * @param date The other network.
 	 * @return A new network with a combined weights.
 	 */
-	public Network mateWith(Network date) {
+	public Network mateWithR(Network date) {
 		if(date.hiddenL != hiddenL || date.hiddenN != hiddenN ||
 		   date.inputs != inputs || date.outputs != outputs) {
 			throw new IllegalArgumentException();
@@ -120,7 +121,32 @@ public class Network {
 		
 		Network res = new Network(inputs, hiddenL, hiddenN, outputs, biased);
 		for(int i = 0; i < weightLayer.length; i++) {
-			WeightsLayer w = weightLayer[i].mateWith(date.weightLayer[i]);
+			WeightsLayer w = weightLayer[i].mateWithR(date.weightLayer[i]);
+			for(int j = 0; j < w.getInputs(); j++) {
+				for(int k = 0; k < w.getOutputs(); k++) {
+					res.weightLayer[i].setWeight(j, k, w.getWeight(j, k));
+				}
+			}
+		}
+		
+		return res;
+	}
+	
+	/**
+	 * Mating by splitting weight layers.
+	 * @param date The other network.
+	 * @param ratio How many weight out of 100 that should be kept.
+	 * @return A new network with a combined weights.
+	 */
+	public Network mateWithS(Network date, int ratio) {
+		if(date.hiddenL != hiddenL || date.hiddenN != hiddenN ||
+		   date.inputs != inputs || date.outputs != outputs) {
+			throw new IllegalArgumentException();
+		}
+		
+		Network res = new Network(inputs, hiddenL, hiddenN, outputs, biased);
+		for(int i = 0; i < weightLayer.length; i++) {
+			WeightsLayer w = weightLayer[i].mateWithS(date.weightLayer[i], ratio);
 			for(int j = 0; j < w.getInputs(); j++) {
 				for(int k = 0; k < w.getOutputs(); k++) {
 					res.weightLayer[i].setWeight(j, k, w.getWeight(j, k));

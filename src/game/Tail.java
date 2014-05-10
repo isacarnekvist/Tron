@@ -76,10 +76,11 @@ public class Tail {
 	
 	/**
 	 * @return An array of spread out (i.e. not all) coordinates from the tail.
+	 * @param distance how many points in tail to skip in between every sample
 	 */
-	public ArrayList<SimpleMatrix> tailSamples() {
+	public ArrayList<SimpleMatrix> tailSamples(int distance) {
 		ArrayList<SimpleMatrix> res = new ArrayList<SimpleMatrix>();
-		for(int i = 80; i < tail.size(); i += length/30) {
+		for(int i = 80; i < tail.size(); i += distance) {
 			res.add(new SimpleMatrix(1, 2, true, tail.get(i).get(X), tail.get(i).get(Y)));
 		}
 		return res;

@@ -158,7 +158,7 @@ public class WeightsLayer {
 	 * @param date The matrix to mix with
 	 * @return The next generations weights
 	 */
-	protected WeightsLayer mateWith(WeightsLayer date) {
+	protected WeightsLayer mateWithR(WeightsLayer date) {
 		Random r = new Random(System.nanoTime());
 		WeightsLayer res = new WeightsLayer(getInputs(), getOutputs(), false);
 		for(int i = 0; i < getInputs(); i++) {
@@ -170,6 +170,33 @@ public class WeightsLayer {
 				case 1:
 					res.setWeight(i, j, date.weights[i][j]);
 					break;
+				}
+			}
+		}
+		
+		if(biased) {
+			res.biased = true;
+		}
+		
+		return res;
+	}
+	
+	/**
+	 * Splits layers in half an combines.
+	 * @param date
+	 * @param ratio How many neurons of 100 that should be kept
+	 * @return
+	 */
+	protected WeightsLayer mateWithS(WeightsLayer date, int ratio) {
+		int split = ratio*date.getOutputs()/100;
+		WeightsLayer res = new WeightsLayer(getInputs(), getOutputs(), false);
+		
+		for(int i = 0; i < getInputs(); i++) {
+			for(int j = 0; j < getOutputs(); j++) {
+				if (j > split) {
+					res.setWeight(i, j, weights[i][j]);
+				} else {
+					res.setWeight(i, j, date.weights[i][j]);
 				}
 			}
 		}
