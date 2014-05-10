@@ -16,13 +16,13 @@ public class WeightsLayerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		w1 = new WeightsLayer(1, 1);
-		w2 = new WeightsLayer(1, 10);
-		w3 = new WeightsLayer(10, 1);
-		w4 = new WeightsLayer(10, 10);
-		w5 = new WeightsLayer(10, 10);
-		w6 = new WeightsLayer(5, 7);
-		w7 = new WeightsLayer(5, 7);
+		w1 = new WeightsLayer(1, 1, true);
+		w2 = new WeightsLayer(1, 10, false);
+		w3 = new WeightsLayer(10, 1, true);
+		w4 = new WeightsLayer(10, 10, false);
+		w5 = new WeightsLayer(10, 10, false);
+		w6 = new WeightsLayer(5, 7, true);
+		w7 = new WeightsLayer(5, 7, true);
 	}
 
 	@After
@@ -42,12 +42,6 @@ public class WeightsLayerTest {
 		w6.randomize();
 		w7.randomize();
 		WeightsLayer w8 = w6.mateWith(w7);
-		w6.description();
-		System.out.println();
-		w7.description();
-		System.out.println();
-		w8.description();
-		System.out.println();
 	}
 	
 	@Test
@@ -60,11 +54,11 @@ public class WeightsLayerTest {
 
 	@Test
 	public void testConstructor() {
-		new WeightsLayer(1,1);
+		new WeightsLayer(1,1, false);
 		
 		boolean success = false;
 		try {
-			new WeightsLayer(0, 0);
+			new WeightsLayer(0, 0, true);
 		} catch (IllegalArgumentException e) {
 			success = true;
 		}
@@ -72,7 +66,7 @@ public class WeightsLayerTest {
 		
 		success = false;
 		try {
-			new WeightsLayer(1, -1);
+			new WeightsLayer(1, -1, false);
 		} catch (IllegalArgumentException e) {
 			success = true;
 		}
@@ -80,7 +74,7 @@ public class WeightsLayerTest {
 		
 		success = false;
 		try {
-			new WeightsLayer(-1, 1);
+			new WeightsLayer(-1, 1, true);
 		} catch (IllegalArgumentException e) {
 			success = true;
 		}

@@ -13,11 +13,11 @@ public class NetworkTest {
 
 	@Before
 	public void setUp() throws Exception {
-		n1 = new Network(1, 0, 0, 1);
-		n2 = new Network(2, 1, 3, 2);
-		n3 = new Network(3, 4, 10, 3);
-		n4 = new Network(4, 2, 10, 3);
-		n5 = new Network(4, 2, 10, 3);
+		n1 = new Network(1, 0, 0, 1, true);
+		n2 = new Network(2, 1, 3, 2, false);
+		n3 = new Network(3, 4, 10, 3, true);
+		n4 = new Network(4, 2, 10, 3, true);
+		n5 = new Network(4, 2, 10, 3, true);
 		n1.randomizeWeights();
 		n2.randomizeWeights();
 		n3.randomizeWeights();
@@ -62,7 +62,7 @@ public class NetworkTest {
 	public void testConstruct() {
 		boolean success = false;
 		try {
-			new Network(0, 1, 1, 1);
+			new Network(0, 1, 1, 1, false);
 		} catch (IllegalArgumentException e) {
 			success = true;
 		}
@@ -70,13 +70,13 @@ public class NetworkTest {
 		
 		success = false;
 		try {
-			new Network(1, 1, 1, 0);
+			new Network(1, 1, 1, 0, false);
 		} catch (IllegalArgumentException e) {
 			success = true;
 		}
 		assertTrue(success);
 		
-		new Network(1, 0, 0, 1);
+		new Network(1, 0, 0, 1, true);
 	}
 
 	public static void printVector(double[] v){

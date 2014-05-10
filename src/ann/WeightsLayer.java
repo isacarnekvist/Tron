@@ -11,18 +11,25 @@ public class WeightsLayer {
 	
 	private double[][] weights; // m x n matrix, m is input, n is output
 	private NeuronLayer next;
+	private boolean biased;
 	
 	/**
 	 * Creates a new Weights layer
 	 * @param in How many sending neurons in previous layer
 	 * @param out How many receiving neurons in next layer.
+	 * @param biased Should each neuron receive an extra '1' and extra corr. weights?
 	 */
-	protected WeightsLayer(int in, int out){
+	protected WeightsLayer(int in, int out, boolean biased){
 		if(in < 1 || out < 1) {
 			throw new IllegalArgumentException();
 		}
-		
-		weights = new double[in][out];
+		if(biased) {
+			this.biased = true;
+			weights = new double[in + 1][out];
+		} else {
+			this.biased = false;
+			weights = new double[in][out];
+		}
 		next = null;
 	}
 	
@@ -45,6 +52,11 @@ public class WeightsLayer {
 		for(int i = 0; i < signals.length; i++) {
 			for(int j = 0; j < next.getSize(); j++) {
 				next.input(signals[i]*weights[i][j], j);
+			}
+		}
+		if(biased) { // Send bias signals
+			for(int i = 0; i < next.getSize(); i++) { 
+				next.input(weights[getInputs() - 1][i], i);
 			}
 		}
 	}
@@ -148,7 +160,7 @@ public class WeightsLayer {
 	 */
 	protected WeightsLayer mateWith(WeightsLayer date) {
 		Random r = new Random(System.nanoTime());
-		WeightsLayer res = new WeightsLayer(getInputs(), getOutputs());
+		WeightsLayer res = new WeightsLayer(getInputs(), getOutputs(), false);
 		for(int i = 0; i < getInputs(); i++) {
 			for(int j = 0; j < getOutputs(); j++) {
 				switch (r.nextInt(2)) {
@@ -160,6 +172,10 @@ public class WeightsLayer {
 					break;
 				}
 			}
+		}
+		
+		if(biased) {
+			res.biased = true;
 		}
 		
 		return res;

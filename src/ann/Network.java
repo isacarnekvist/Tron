@@ -12,6 +12,7 @@ public class Network {
 	private NeuronLayer outputLayer;
 	private int inputs, outputs;	// How many input neurons
 	private int hiddenL, hiddenN;	// How many hidden (L)ayers, and (N)eurons in each of those
+	private boolean biased;
 	
 	/**
 	 * Constructor of a complete neural network, a small little brain!!!
@@ -19,8 +20,9 @@ public class Network {
 	 * @param hiddenLayers How many hidden layers
 	 * @param hiddenNeurons How many neurons in each of the hidden layers
 	 * @param outputNeurons How many neurons in the output layer
+	 * @param biased Should each neuron receive an extra '1' and extra corr. weights?
 	 */
-	public Network(int inputNeurons, int hiddenLayers, int hiddenNeurons, int outputNeurons) {
+	public Network(int inputNeurons, int hiddenLayers, int hiddenNeurons, int outputNeurons, boolean biased) {
 		if (inputNeurons < 1 || outputNeurons < 1 || hiddenLayers < 0) {
 			throw new IllegalArgumentException();
 		}
@@ -33,12 +35,13 @@ public class Network {
 		outputs = outputNeurons;
 		hiddenL = hiddenLayers;
 		hiddenN = hiddenNeurons;
+		this.biased = biased;
 		
 		weightLayer = new WeightsLayer[hiddenLayers + 1];
 		inputLayer = new NeuronLayer(inputNeurons);
 		
 		if(hiddenLayers != 0) { // There are hidden layers
-			weightLayer[0] = new WeightsLayer(inputNeurons, hiddenNeurons); // Between input and first hidden
+			weightLayer[0] = new WeightsLayer(inputNeurons, hiddenNeurons, biased); // Between input and first hidden
 			
 			hiddenLayer = new NeuronLayer[hiddenLayers];
 			for (int i = 0; i < hiddenLayers; i++) {
@@ -48,7 +51,7 @@ public class Network {
 			// Create all weight layers
 			// Between hidden layers
 			for (int i = 1; i < hiddenLayers; i++) {
-				weightLayer[i] = new WeightsLayer(hiddenNeurons, hiddenNeurons);
+				weightLayer[i] = new WeightsLayer(hiddenNeurons, hiddenNeurons, biased);
 			}
 			
 			for (int i = 0; i < hiddenLayers; i++) {
@@ -56,13 +59,13 @@ public class Network {
 			}
 			
 			outputLayer = new NeuronLayer(outputNeurons);
-			weightLayer[hiddenLayers] = new WeightsLayer(hiddenNeurons, outputNeurons);
+			weightLayer[hiddenLayers] = new WeightsLayer(hiddenNeurons, outputNeurons, biased);
 			weightLayer[hiddenLayers].setNextNeuronLayer(outputLayer);
 			
 			
 		} else { // No hidden layers
 			hiddenLayer = new NeuronLayer[0];
-			weightLayer[0] = new WeightsLayer(inputNeurons, outputNeurons);
+			weightLayer[0] = new WeightsLayer(inputNeurons, outputNeurons, biased);
 			outputLayer = new NeuronLayer(outputNeurons);
 			weightLayer[0].setNextNeuronLayer(outputLayer);
 		}
@@ -115,7 +118,7 @@ public class Network {
 			throw new IllegalArgumentException();
 		}
 		
-		Network res = new Network(inputs, hiddenL, hiddenN, outputs);
+		Network res = new Network(inputs, hiddenL, hiddenN, outputs, biased);
 		for(int i = 0; i < weightLayer.length; i++) {
 			WeightsLayer w = weightLayer[i].mateWith(date.weightLayer[i]);
 			for(int j = 0; j < w.getInputs(); j++) {
@@ -134,7 +137,7 @@ public class Network {
 	 */
 	public void mutate(int probability) {
 		for(WeightsLayer w : weightLayer) {
-			
+			w.mutate(probability);
 		}
 	}
 	
