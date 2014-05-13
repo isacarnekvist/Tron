@@ -3,7 +3,6 @@ import org.lwjgl.input.Keyboard;
 import org.ejml.simple.*;
 
 import ann.Network;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -30,7 +29,7 @@ public class GameController {
 	
 	private AIHandler aiHandler;
 	// Constants
-	private final boolean AI_TRAINING = true;
+	private final boolean AI_TRAINING = false;
 	
 	private final int LEFT 		= -1;
 	private final int STRAIGHT 	= 0;
@@ -70,14 +69,14 @@ public class GameController {
 		end_loser = new Sprite("res/end_loser.png", 512, 112);
 		end_tie = new Sprite("res/end_tie.png", 512, 512);
 		
-		// Add Screenbounds
+		// Add screen bounds
 		screenBounds = new ArrayList<SimpleMatrix>();
 		screenBounds.add(new SimpleMatrix(1, 2, true, 0, 0));
 		screenBounds.add(new SimpleMatrix(1, 2, true, 0, height));
 		screenBounds.add(new SimpleMatrix(1, 2, true, width, height));
 		screenBounds.add(new SimpleMatrix(1, 2, true, width, 0));
 		
-		aiHandler = new AIHandler(30);
+		aiHandler = new AIHandler(40);
 		if(AI_TRAINING) {
 			state = AI_STATE;
 		} else {
@@ -156,7 +155,7 @@ public class GameController {
 		
 		grid.render(player1.getFrontCenterPos(), player2.getFrontCenterPos()); 
 		
-		while (powerups.size() < 0) {
+		while (powerups.size() < 3) {
 			Powerup p = new Powerup(width, height);
 			if(!player1.isCollision(p.getPos(), 200, p.getBoundingCoordinates()) &&
 					!player2.isCollision(p.getPos(), p.getRadius(), p.getBoundingCoordinates())) {
@@ -239,22 +238,24 @@ public class GameController {
 	private Double[] getAIArgs(Bike player, Bike otherPlayer){
 		// These are returned:
 		// Angle [-pi/2, pi/2] and distance to:
-		//    opponent
-		//    14 closest obstacles
+		//    20 closest obstacles (can be other player)
 		//				
 		// --------------------------
-		//  = 30 arguments
+		//  = 40 arguments
 		// 			   
-		Double[] res = new Double[30];
-		res[0] = Geometry.angle(player.getVelocity(),                              // angle to opponent
-				otherPlayer.getCenter().minus(player.getCenter()));
-		res[1] = otherPlayer.getCenter().minus(player.getCenter()).normF()/width;  // distance to opponent
+		Double[] res = new Double[40];
 		
 		VectorComparator vc = new VectorComparator(player.getCenter());
 		TreeSet<SimpleMatrix> obstacles = new TreeSet<>(vc);
 		
+		// Add other player
+		if(Geometry.angle(player.getVelocity(),
+				otherPlayer.getCenter().minus(player.getCenter())) < Math.PI/2) {
+			obstacles.add(otherPlayer.getFrontCenterPos());
+		}
+		
 		// Add coordinates to portions of my tail that is in front of me
-		for(SimpleMatrix v : player.tailSamples(25)) {
+		for(SimpleMatrix v : player.tailSamples(10)) {
 			double angle = Geometry.angle(player.getVelocity(),
 					otherPlayer.getCenter().minus(player.getCenter()));
 			if(Math.abs(angle) < Math.PI/2) { // Obstacles are in my sight
@@ -263,7 +264,7 @@ public class GameController {
 		}
 		
 		// Add coordinates to portions of opponents tail that is in front of me
-		for(SimpleMatrix v : otherPlayer.tailSamples(25)) {
+		for(SimpleMatrix v : otherPlayer.tailSamples(10)) {
 			double angle = Geometry.angle(player.getVelocity(),
 					otherPlayer.getCenter().minus(player.getCenter()));
 			if(angle < Math.PI/2) { // Obstacles are in my sight
@@ -274,7 +275,7 @@ public class GameController {
 		// Add bottom and top wall coordinates
 		for(int x = (int)player.getCenter().get(0) - 300;
 				x < player.getCenter().get(0) + 300;
-				x += 20) {
+				x += 10) {
 			SimpleMatrix up = new SimpleMatrix(1, 2, true, x, 0);
 			SimpleMatrix down = new SimpleMatrix(1, 2, true, x, height);
 			if(Geometry.angle(player.getVelocity(), up.minus(player.getVelocity())) < Math.PI/2) {
@@ -287,7 +288,7 @@ public class GameController {
 		// Add left and right wall coordinates
 		for(int y = (int)player.getCenter().get(1) - 350;
 				y < player.getCenter().get(1) + 350;
-				y += 20) {
+				y += 10) {
 			SimpleMatrix right = new SimpleMatrix(1, 2, true, width, y);
 			SimpleMatrix left = new SimpleMatrix(1, 2, true, 0, y);
 			if(Geometry.angle(player.getVelocity(), right.minus(player.getVelocity())) < Math.PI/2) {
@@ -298,13 +299,19 @@ public class GameController {
 		}
 		
 		// Now add the closest obstacles
-		for (int i = 0; i < 14; i++) {
+		for (int i = 0; i < res.length/2; i++) {
 			SimpleMatrix v = obstacles.pollFirst();
 			// Angle relative the right hand side orth. vector
-			res[2 + 2*i] = Geometry.angle(player.getVelocity().mult(new SimpleMatrix(2, 2, true, 0, -1, 1, 0)),
+			res[2*i] = Geometry.angle(player.getVelocity().mult(new SimpleMatrix(2, 2, true, 0, -1, 1, 0)),
 					v.minus(player.getCenter()));
-			res[3 + 2*i] = v.minus(player.getCenter()).normF();
+			res[1 + 2*i] = v.minus(player.getCenter()).normF();
 		}
+		
+		/*System.out.println("Arguments:");
+		for(int i = 0; i < 15; i++) {
+			System.out.printf(" - angle %.2f \t dist %.2f\n", res[2*i], res[1+2*i]);
+		}*/
+		
 		return res;
 	}
 

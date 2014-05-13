@@ -11,7 +11,7 @@ public class AIHandler {
 	private LinkedList<Network> winners; 	// Which networks won?
 	private Network player1AI;
 	private Network player2AI;
-	private final int startAmount = 20;
+	private final int startAmount = 10;
 	private Random rand;
 	private long iteration;					// How many games have run?
 	
@@ -22,7 +22,7 @@ public class AIHandler {
 	public AIHandler(int args) {
 		anns = new LinkedList<Network>();
 		for (int i = 0; i < startAmount; i++) {
-			Network n = new Network(args, 3, (args+1)/2, 1, true);
+			Network n = new Network(args, 2, (args+1)/2, 1, true);
 			n.randomizeWeights();
 			anns.addLast(n);		
 		}

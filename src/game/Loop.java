@@ -38,8 +38,8 @@ public class Loop {
 		// LWJGL Setup
 		try {
 			Display.setFullscreen(true);
-			Display.setDisplayMode(new DisplayMode(1100, 700));
-			Display.setLocation(0, 0);
+			//Display.setDisplayMode(new DisplayMode(1100, 700));
+			//Display.setLocation(0, 0);
 			Display.setTitle("TRON-SNAKE");
 			Display.setVSyncEnabled(true);
 			Display.create();
@@ -48,7 +48,7 @@ public class Loop {
 			System.exit(0);
 		}
 		
-		//Mouse.setGrabbed(true);
+		Mouse.setGrabbed(true);
 		aspectRatio = (double)Display.getHeight()/Display.getWidth();
 		
 		// OpenGL setup
