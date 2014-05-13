@@ -2,12 +2,8 @@ package game;
 import org.lwjgl.input.Keyboard;
 import org.ejml.simple.*;
 
-import ann.Network;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Random;
-import java.util.Stack;
 import java.util.TreeSet;
 
 public class GameController {
