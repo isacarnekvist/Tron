@@ -2,7 +2,6 @@ package ann;
 
 /**
  * A complete neural network, a small little brain!!!
- * @author Isac Arnekvist
  */
 public class Network {
 	

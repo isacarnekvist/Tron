@@ -4,7 +4,6 @@ import java.util.Random;
 
 /**
  * Handles signals and weights between layers.
- * @author Isac Arnekvist
  *
  */
 public class WeightsLayer {

@@ -2,7 +2,6 @@ package ann;
 
 /**
  * Handles a single neuron. Keeps track of state and calculates output values.
- * @author Isac Arnekvist
  *
  */
 public class Neuron {
