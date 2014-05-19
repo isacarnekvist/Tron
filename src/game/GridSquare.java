@@ -24,14 +24,10 @@ public class GridSquare {
 	
 	public void render() {
 		double t = visitedTime - System.nanoTime()/1E9;
-		double flash = 0.35*Math.pow(Math.E, t);
-		Color c = new Color(
-			(float) (flash + 0.3 + 0.3*Math.sin((double)System.nanoTime()/3E9)),
-			(float) (flash + 0.3 + 0.3*Math.sin(4*Math.PI/6 + (double)System.nanoTime()/3E9)),
-			(float) (flash + 0.3 + 0.3*Math.sin(8*Math.PI/6 + (double)System.nanoTime()/3E9)),
-			1f
-		);
-		c.bind();
+		float flash = 0.35f*(float)Math.pow(Math.E, t);
+		float hue = 0.5f + 0.5f*(float)Math.sin((double)System.nanoTime()/1e10);
+		int rgb = java.awt.Color.HSBtoRGB(hue, 0.8f, 0.5f + flash);
+		new Color(rgb).bind();
 		sprite.draw(x, y);
 		Color.white.bind();
 	}

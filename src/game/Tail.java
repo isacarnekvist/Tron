@@ -20,7 +20,7 @@ public class Tail {
 	public Tail(String filename) {
 		tail = new LinkedList<SimpleMatrix>();
 		sprite = new TailSprite(filename);
-		length = 300;
+		length = 50;
 	}
 	
 	/**
@@ -58,7 +58,7 @@ public class Tail {
 		
 		for (int i = 40; i < tail.size(); i += 10) {
 			checker = new SimpleMatrix(1, 2, true, tail.get(i).get(0), tail.get(i).get(1));
-			if (checker.minus(otherPos).normF() < radius + 170) { // Approximate checking
+			if (checker.minus(otherPos).normF() < radius + 260) { // Approximate checking
 				// Now, precise checking
 				for(int j = i - 30; j < Math.min(tail.size() - 3, i + 30); j += 3) {
 					for(int z = 0; z < shape.size(); z++) {

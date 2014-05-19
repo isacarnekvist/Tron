@@ -17,7 +17,7 @@ public class Bike {
 	private final int LEFT = -1;
 	private final int STRAIGHT = 0;
 	private final int RIGHT = 1;
-	private double turningSpeed = 1.3*Math.PI;	// radians per second
+	private double turningSpeed = 1.6*Math.PI;	// radians per second
 	
 	// Other constants
 	private final int X = 0;
@@ -174,15 +174,15 @@ public class Bike {
 	public void powerup(Powerup p) {
 		switch (p.getType()) {
 		case "Speed":
-			vel = vel.scale(1.2);
-			turningSpeed *= 1.2;
+			vel = vel.scale(1.07);
+			turningSpeed *= 1.07;
 			break;
 		case "Slow":
 			vel = vel.scale(0.5);
 			turningSpeed *= 0.5;
 			break;
 		case "Longer":
-			tail.setLength(tail.getLength() + 200);
+			tail.setLength((int)(tail.getLength()*1.2));
 			break;
 		case "Shorter":
 			tail.setLength(tail.getLength() - 50);
